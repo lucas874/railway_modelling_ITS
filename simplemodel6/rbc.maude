@@ -14,7 +14,7 @@ omod RBC is
 
     class RBC | occupiedTracks : MapTrack2Bool, trainPositions : MapTrain2Track .
 
-    vars TRK1, T2 : Track .
+    vars TRK1, TRK2 : Track .
     *** If a train is occupying track `TRK` then 
     *** `OCCMAP[TRK] = true`, otherwise `OCCMAP[TRK] = false`.  
     var OCCMAP : MapTrack2Bool .
@@ -73,16 +73,16 @@ omod RBC is
 
     *** Last train, but not on exit.
     crl [lastTrainNotExit] :
-        updateChange(O1, T2)
+        updateChange(O1, TRK2)
         < O2 : RBC | occupiedTracks : OCCMAP, trainPositions : POSMAP >
         => 
         eoaMA(maxTrainID,
-                computeMA(T2, 
-                          freeTracksAhead(T2, insert(T2, true, insert(prev(T2), false, OCCMAP)))))
-        < O2 : RBC | occupiedTracks : insert(T2, true, insert(prev(T2), false, OCCMAP)),
-                     trainPositions : insert(maxTrainID, T2, POSMAP)
+                computeMA(TRK2, 
+                          freeTracksAhead(TRK2, insert(TRK2, true, insert(prev(TRK2), false, OCCMAP)))))
+        < O2 : RBC | occupiedTracks : insert(TRK2, true, insert(prev(TRK2), false, OCCMAP)),
+                     trainPositions : insert(maxTrainID, TRK2, POSMAP)
         >
-        if T2 =/= Exit and O1 == maxTrainID .
+        if TRK2 =/= Exit and O1 == maxTrainID .
 
     *** Not last train, but not on exit.
     crl [notLastOnExit] : 
@@ -99,16 +99,16 @@ omod RBC is
 
     *** Not last train and not on exit.
     crl [updateMovementAuthority] :
-        updateChange(O1, T2)
+        updateChange(O1, TRK2)
         < O2 : RBC | occupiedTracks : OCCMAP, trainPositions : POSMAP >
         => 
-        eoaMA(O1, computeMA(T2, 
-                            freeTracksAhead(T2, insert(T2, true, insert(prev(T2), false, OCCMAP)))))
+        eoaMA(O1, computeMA(TRK2, 
+                            freeTracksAhead(TRK2, insert(TRK2, true, insert(prev(TRK2), false, OCCMAP)))))
         eoaMA(O1 + 1, 
               computeMA(POSMAP[O1 + 1], 
-                        freeTracksAhead(POSMAP[O1 + 1], insert(T2, true, insert(prev(T2), false, OCCMAP)))))
-        < O2 : RBC | occupiedTracks : insert(T2, true, insert(prev(T2), false, OCCMAP)),
-                     trainPositions : insert(O1, T2, POSMAP)
+                        freeTracksAhead(POSMAP[O1 + 1], insert(TRK2, true, insert(prev(TRK2), false, OCCMAP)))))
+        < O2 : RBC | occupiedTracks : insert(TRK2, true, insert(prev(TRK2), false, OCCMAP)),
+                     trainPositions : insert(O1, TRK2, POSMAP)
         >
-        if O1 < maxTrainID and T2 =/= Exit .
+        if O1 < maxTrainID and TRK2 =/= Exit .
 endom
