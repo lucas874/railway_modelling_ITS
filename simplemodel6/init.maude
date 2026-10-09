@@ -25,7 +25,7 @@ omod INITIAL-STATES is
         < 1 : Train | position : 0, velocity : 0, eoa : 0,
             trainComponents : 
                 < TP1 : TrainPlant | currentState : accelerating  >
-                < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
+                < OBU1 : OnBoardUnit | obuTimer : deltaOBU, last : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
         < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >
@@ -37,7 +37,7 @@ omod INITIAL-STATES is
             trainComponents : 
                 < GoodDriver1 : Driver | timer : deltaDriver >
                 < TP1 : TrainPlant | currentState : accelerating  >
-                < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
+                < OBU1 : OnBoardUnit | obuTimer : deltaOBU, last : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
         < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >
@@ -47,7 +47,7 @@ omod INITIAL-STATES is
         < 1 : Train | position : 0, velocity : 70, eoa : 44784,
             trainComponents : 
                 < TP1 : TrainPlant | currentState : coasting > 
-                < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
+                < OBU1 : OnBoardUnit | obuTimer : deltaOBU, last : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
         < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >
@@ -59,14 +59,14 @@ omod INITIAL-STATES is
             trainComponents : 
                 < GoodDriver1 : Driver | timer : deltaDriver >
                 < TP1 : TrainPlant | currentState : accelerating  > 
-                < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
+                < OBU1 : OnBoardUnit | obuTimer : deltaOBU, last : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >  
         >
         < 2 : Train | position : 0, velocity : 0, eoa : 0, 
             trainComponents : 
                 < GoodDriver2 : Driver | timer : deltaDriver >
                 < TP2 : TrainPlant | currentState : stopped > 
-                < OBU2 : OnBoardUnit | c : deltaOBU + shift, last : dummy >
+                < OBU2 : OnBoardUnit | obuTimer : deltaOBU + shift, last : dummy >
                 < TC2 : TrackComputation | timerTC : deltaTC + shift, oldTrack : Entry >
         >
         < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry, 2 |-> Entry) >

@@ -6,7 +6,7 @@ omod ONBOARDUNIT is
     protecting DRIVER .
 
     *** TODO: Rename `c` call it timer or something.
-    class OnBoardUnit | c : Time, last : Msg .
+    class OnBoardUnit | obuTimer : Time, last : Msg .
 
     vars C R : Time .
     vars O1 O2 O3 : Oid .
@@ -33,12 +33,12 @@ omod ONBOARDUNIT is
 
     *** The `mte` (maximum time elapse) of 
     *** `OnBoardUnit` is the value of its timer.
-    eq mte(< O1 : OnBoardUnit | c : C >) = C .
+    eq mte(< O1 : OnBoardUnit | obuTimer : C >) = C .
 
     *** The `delta` of the `OnBoardUnit` class
     *** decrases the timer of `OnBoardUnit`.
-    eq delta(< O1 : OnBoardUnit | c : C >, R)
-        = < O1 : OnBoardUnit | c : C monus R > .
+    eq delta(< O1 : OnBoardUnit | obuTimer : C >, R)
+        = < O1 : OnBoardUnit | obuTimer : C monus R > .
 
     *** Store 'd-' messages from `driver` in 
     *** last field as 'c-' messages.
@@ -63,7 +63,7 @@ omod ONBOARDUNIT is
             trainComponents : 
                 (
                     REST < O3 : Driver | timer : NZT >
-                    < O1 : OnBoardUnit | c : 0, last : MSG >
+                    < O1 : OnBoardUnit | obuTimer : 0, last : MSG >
                 ) 
         >
         => < O2 : Train |
@@ -94,7 +94,7 @@ omod ONBOARDUNIT is
                         MSG *** Pass on message from driver. 
                     fi)
                 fi)
-            REST < O3 : Driver | > < O1 : OnBoardUnit | c : deltaOBU, last : dummy > >
+            REST < O3 : Driver | > < O1 : OnBoardUnit | obuTimer : deltaOBU, last : dummy > >
             if not MSG == dummy .
     
     *** Rule applies when timer expires and
@@ -105,7 +105,7 @@ omod ONBOARDUNIT is
             trainComponents :
                 (
                     REST < O3 : Driver | timer : NZT >
-                    < O1 : OnBoardUnit | c : 0, last : dummy >                
+                    < O1 : OnBoardUnit | obuTimer : 0, last : dummy >                
                 )
         >
         => < O2 : Train |
@@ -132,7 +132,7 @@ omod ONBOARDUNIT is
                         none
                     fi)
                 fi
-            REST < O3 : Driver | > < O1 : OnBoardUnit | c : deltaOBU, last : dummy > )> . 
+            REST < O3 : Driver | > < O1 : OnBoardUnit | obuTimer : deltaOBU, last : dummy > )> . 
             *** Don't know the parenthesis isn't placed the 
             *** same place as in brakeIfNeededAndResetTimer
 endom
