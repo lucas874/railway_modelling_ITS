@@ -10,7 +10,7 @@ omod ONBOARDUNIT is
 
     vars T1 T2 : Time .
     vars O1 O2 O3 : Oid .
-    vars POS VEL DACC A EOA : NNegRat .
+    vars POS VEL DACC ACC EOA : NNegRat .
     var REST : Configuration .
     var MSG : Msg .
     var NZT : NzTime .
@@ -20,16 +20,16 @@ omod ONBOARDUNIT is
     op ebc : -> NNegRat .
 
     op predictSpeed : NNegRat NNegRat -> NNegRat .
-    eq predictSpeed(VEL, A) = VEL + A * deltaOBU .
+    eq predictSpeed(VEL, ACC) = VEL + ACC * deltaOBU .
 
     op brakingDistance : NNegRat NNegRat NNegRat -> NNegRat .
     
-    eq brakingDistance(VEL, DACC, A)
-        = (predictSpeed(VEL, A) * predictSpeed(VEL, A)) / (2 * DACC) .
+    eq brakingDistance(VEL, DACC, ACC)
+        = (predictSpeed(VEL, ACC) * predictSpeed(VEL, ACC)) / (2 * DACC) .
 
     op distanceTraveled : NNegRat NNegRat Time -> NNegRat .
-    eq distanceTraveled(VEL, A, T2)
-        = (VEL * T2) + (1/2 * A) * (T2 * T2) .
+    eq distanceTraveled(VEL, ACC, T2)
+        = (VEL * T2) + (1/2 * ACC) * (T2 * T2) .
 
     *** The `mte` (maximum time elapse) of 
     *** `OnBoardUnit` is the value of its timer.
