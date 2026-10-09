@@ -23,12 +23,12 @@ omod TRAINPLANT is
     *** Passage of time does not affect a train plant.
     eq mte(< O1 : TrainPlant | >) = INF .
 
-    var R : Time .
-    var O1 Id : Oid . 
+    var T : Time .
+    var O1 : Oid . 
     var St : TrainState .
 
     *** Again, passage of time does not affect a train plant.
-    eq delta(< O1 : TrainPlant | >, R)
+    eq delta(< O1 : TrainPlant | >, T)
         = < O1 : TrainPlant | > .
 
     *** Effects of commands on trainplant
