@@ -14,7 +14,7 @@ omod TRAINPLANT is
     *** States representing train being 
     *** stopped, accelerating, decelerating,
     *** coasting, and emergency breaking, respectively.
-    ops stopped a d c eb : -> TrainState [ctor] .
+    ops stopped accelerating d c eb : -> TrainState [ctor] .
 
     *** The train plant.
     class TrainPlant | currentState : TrainState .
@@ -51,28 +51,28 @@ omod TRAINPLANT is
 
     rl cacc < O1 : TrainPlant | currentState : stopped >
         =>
-        < O1 : TrainPlant | currentState : a > .
+        < O1 : TrainPlant | currentState : accelerating  > .
 
     *** Effects of commands when accelerating.
     *** All messages except cacc changes the 
     *** current state.
-    rl cdec < O1 : TrainPlant | currentState : a >  
+    rl cdec < O1 : TrainPlant | currentState : accelerating  >  
         =>
         < O1 : TrainPlant | currentState : d > .
 
-    rl cacc  < O1 : TrainPlant | currentState : a >  
+    rl cacc < O1 : TrainPlant | currentState : accelerating  >  
         =>
         < O1 : TrainPlant | > .  
 
-    rl ccoast < O1 : TrainPlant | currentState : a >  
+    rl ccoast < O1 : TrainPlant | currentState : accelerating  >  
         =>
         < O1 : TrainPlant | currentState : c > .
 
-    rl isb  < O1 : TrainPlant | currentState : a >  
+    rl isb  < O1 : TrainPlant | currentState : accelerating  >  
         =>
         < O1 : TrainPlant | currentState : d > .
 
-    rl ieb < O1 : TrainPlant | currentState : a >  
+    rl ieb < O1 : TrainPlant | currentState : accelerating  >  
         =>
         < O1 : TrainPlant | currentState : eb > .  
 
@@ -97,7 +97,7 @@ omod TRAINPLANT is
 
     rl cacc < O1 : TrainPlant | currentState : c >  
         =>
-        < O1 : TrainPlant | currentState : a > .
+        < O1 : TrainPlant | currentState : accelerating  > .
 
     *** Effects of commands when decelerating
     *** All messages except cdec and isb 
@@ -115,9 +115,9 @@ omod TRAINPLANT is
         =>
         < O1 : TrainPlant | currentState : eb > .
 
-    rl cacc  < O1 : TrainPlant | currentState : d >  
+    rl cacc < O1 : TrainPlant | currentState : d >  
         =>
-        < O1 : TrainPlant | currentState : a > . 
+        < O1 : TrainPlant | currentState : accelerating  > . 
 
     *** Effects of commands when emergency braking.
     *** No commands change the current state.

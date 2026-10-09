@@ -14,12 +14,12 @@ omod MSGS is
 
     msg updateChange : Oid Track -> Msg [ctor] .
     *** eoa is end of authority 
-    *** (location on track to which train is permitted 
-    *** to move in whatever unit of length we use). 
+    *** -- location on track to which train is permitted 
+    *** to move in whatever unit of length we use. 
     *** MA is movement authority 
-    *** (signal granting permission to move. 
+    *** -- signal granting permission to move. 
     *** MA in out model is given as a position in 
-    *** whatever unit of length we use).
+    *** whatever unit of length we use.
     msg eoaMA : Oid Nat -> Msg .
 
     *** Commands to control velocity issued by driver.

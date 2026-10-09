@@ -24,7 +24,7 @@ omod INITIAL-STATES is
         eoaMA(1, 40000)
         < 1 : Train | position : 0, velocity : 0, eoa : 0,
             trainComponents : 
-                < TP1 : TrainPlant | currentState : a >
+                < TP1 : TrainPlant | currentState : accelerating  >
                 < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
@@ -36,7 +36,7 @@ omod INITIAL-STATES is
         < 1 : Train | position : 0, velocity : 0, eoa : 0,
             trainComponents : 
                 < GoodDriver1 : Driver | timer : deltaDriver >
-                < TP1 : TrainPlant | currentState : a >
+                < TP1 : TrainPlant | currentState : accelerating  >
                 < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
@@ -58,7 +58,7 @@ omod INITIAL-STATES is
         < 1 : Train | position : 0, velocity : 0, eoa : 0,
             trainComponents : 
                 < GoodDriver1 : Driver | timer : deltaDriver >
-                < TP1 : TrainPlant | currentState : a > 
+                < TP1 : TrainPlant | currentState : accelerating  > 
                 < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >  
         >

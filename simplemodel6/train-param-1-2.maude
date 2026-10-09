@@ -56,7 +56,7 @@ omod TRAIN is
 
     *** Accelerating.
     eq delta(< O2 : Train | position : POS, velocity : VEL, 
-        trainComponents : (< O1 : TrainPlant | currentState : a > REST) >, T)
+        trainComponents : (< O1 : TrainPlant | currentState : accelerating > REST) >, T)
         = < O2 : Train | position : POS + VEL * T + (1/2 * acc * T * T), 
             velocity : VEL + (acc * T),
             trainComponents : (< O1 : TrainPlant | > delta(REST, T)) > .
