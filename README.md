@@ -59,4 +59,4 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
         * Unused variables and outcommented code have largely been removed.
         * `rbc.maude`:
             * The operation `maxFreeTracksAhead` has been added -- is equal to 5 and is used
-            in operation freeTracksAhead.
+            in operation `freeTracksAhead`.
