@@ -13,6 +13,9 @@ This repository contains a Maude model of a railway system.
 
 The directory [`simplemodel6`](simplemodel6) contains an updated version of the 
 'original' model found in [`simplemodel5`](simplemodel5); these updates are as follows:
+* **File renamings**:
+    * TODO: rename `rbc.maud` `radioblockcenter.maude` to make naming consistent 
+    (OBU file is called onboardunit.maude for instance).
 * **Variable renamings:**
     * [`trackcomputation.maude`](simplemodel6/trackcomputation.maude): 
         * The `c` field (sort `Time`) in the `TrackComputation` class renamed `timerTC`.
@@ -32,10 +35,14 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
         * Variables `X` and `V` (both sort `NNegRat`) renamed `POS` and `VEL`, respectively.
         * Variables `C` and `R` (both sort `Time`) renamed `T1` and `T2`, respectively.
         * Variables `D` and `A` (both sort `Time`) renamed `DACC` and `ACC`, respectively.
+        * Variables `isbc` and `ebc` (both sort `Time`) renamed `DACC` and `ebThreshold`, respectively.
+            * Too aggressive renaming? What did the `i` in `isbc` mean? And did the `c` mean constant?
     * [`trainplant.maude`](simplemodel6/trainplant.maude):
         * The operations `s, a, d, c`, and `eb` (`-> TrainState [ctor]`) have been
         renamed `stopped, accelerating, decelerating, coasting, emergencyBraking`, respectively.
         * The variables `R` (sort `Time`), `M` (sort `Msg`) renamed `T` and `MSG`, respectively.
+    * [`rbc.maude`](simplemodel6/rbc.maude):
+        * The variable `R` (sort `Time`) has been renamed `T`.
     * The attribute `[ctor]` has been added to constructor operators.
     * Labels added:
         * lala
