@@ -14,7 +14,7 @@ omod TRAINPLANT is
     *** States representing train being 
     *** stopped, accelerating, decelerating,
     *** coasting, and emergency breaking, respectively.
-    ops s a d c eb : -> TrainState [ctor] .
+    ops stopped a d c eb : -> TrainState [ctor] .
 
     *** The train plant.
     class TrainPlant | currentState : TrainState .
@@ -43,13 +43,13 @@ omod TRAINPLANT is
     *** Should it say if M = cdec or M = ccoast ...
     *** To avoid reacting to weirdly typed msgs?
     *** Or is M =/= cacc fine?
-    crl M < O1 : TrainPlant | currentState : s >
+    crl M < O1 : TrainPlant | currentState : stopped >
         =>
         < O1 : TrainPlant | >
             if M == cdec or M == ccoast 
             or M == isb  or M == ieb .
 
-    rl cacc < O1 : TrainPlant | currentState : s >
+    rl cacc < O1 : TrainPlant | currentState : stopped >
         =>
         < O1 : TrainPlant | currentState : a > .
 

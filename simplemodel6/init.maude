@@ -65,7 +65,7 @@ omod INITIAL-STATES is
         < 2 : Train | position : 0, velocity : 0, eoa : 0, 
             trainComponents : 
                 < GoodDriver2 : Driver | timer : deltaDriver >
-                < TP2 : TrainPlant | currentState : s > 
+                < TP2 : TrainPlant | currentState : stopped > 
                 < OBU2 : OnBoardUnit | c : deltaOBU + shift, last : dummy >
                 < TC2 : TrackComputation | timerTC : deltaTC + shift, oldTrack : Entry >
         >

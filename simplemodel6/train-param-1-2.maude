@@ -50,7 +50,7 @@ omod TRAIN is
 
     *** Stopped.
     eq delta(< O2 : Train | 
-        trainComponents : (< O1 : TrainPlant | currentState : s > REST) >, T)
+        trainComponents : (< O1 : TrainPlant | currentState : stopped > REST) >, T)
         = < O2 : Train | 
             trainComponents : (< O1 : TrainPlant | > delta(REST, T)) > .
 
@@ -81,7 +81,7 @@ omod TRAIN is
     crl < O2 : Train | velocity : 0,
         trainComponents : (< O1 : TrainPlant | currentState : TSTATE > REST) >
         => < O2 : Train | 
-        trainComponents : (< O1 : TrainPlant | currentState : s > REST) >
+        trainComponents : (< O1 : TrainPlant | currentState : stopped > REST) >
             if TSTATE == d or TSTATE == eb .
 
     *** Update EoA (end of authority).
