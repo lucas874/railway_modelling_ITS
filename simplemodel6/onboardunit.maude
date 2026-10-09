@@ -15,9 +15,14 @@ omod ONBOARDUNIT is
     var MSG : Msg .
     var NZT : NzTime .
 
+    *** Period of OnBoardUnit i.e., the initial
+    *** value of obuTimer and the value it is given
+    *** when reset.
     op deltaOBU : -> Time .
-    op isbc : -> NNegRat .
-    op ebc : -> NNegRat .
+    *** Speed at which the service brake should be applied.
+    op sbThreshold : -> NNegRat . 
+    *** Speed at which the emergency brake should be applied.
+    op ebThreshold : -> NNegRat . 
 
     op predictSpeed : NNegRat NNegRat -> NNegRat .
     eq predictSpeed(VEL, ACC) = VEL + ACC * deltaOBU .
@@ -81,14 +86,14 @@ omod ONBOARDUNIT is
                     POS + distanceTraveled(VEL, acc, deltaOBU) 
                        + brakingDistance(VEL, ebdacc, acc) >= EOA
                 or
-                    VEL >= ebc
+                    VEL >= ebThreshold
                     then ieb *** Emergency braking.
                 else
                     (if 
                         (POS + distanceTraveled(VEL, acc, deltaOBU)
                            + brakingDistance(VEL, dacc, acc) >= EOA)
                     or
-                        VEL >= isbc
+                        VEL >= sbThreshold
                         then isb *** Service braking.
                     else 
                         MSG *** Pass on message from driver. 
@@ -119,14 +124,14 @@ omod ONBOARDUNIT is
                     POS + distanceTraveled(VEL, acc, deltaOBU) 
                        + brakingDistance(VEL, ebdacc, acc) >= EOA
                 or
-                    VEL >= ebc
+                    VEL >= ebThreshold
                     then ieb *** Emergency braking.
                 else
                     (if
                         POS + distanceTraveled(VEL, acc, deltaOBU)
                           + brakingDistance(VEL, dacc, acc) >= EOA
                     or
-                        VEL >= isbc
+                        VEL >= sbThreshold
                         then isb *** Service braking.
                     else 
                         none

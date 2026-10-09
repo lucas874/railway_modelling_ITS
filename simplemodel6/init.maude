@@ -12,8 +12,8 @@ omod INITIAL-STATES is
     op X : -> NNegRat .
     op shift : -> NNegRat .
 
-    eq isbc = 3550/36 .
-    eq ebc = 100 .
+    eq sbThreshold = 3550/36 .
+    eq ebThreshold = 100 .
 
 
     *** Initial states used for executing model.
