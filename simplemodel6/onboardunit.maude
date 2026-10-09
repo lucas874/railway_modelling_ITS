@@ -6,7 +6,7 @@ omod ONBOARDUNIT is
     protecting DRIVER .
 
     *** TODO: Rename `c` call it timer or something.
-    class OnBoardUnit | obuTimer : Time, last : Msg .
+    class OnBoardUnit | obuTimer : Time, lastMsg : Msg .
 
     vars C R : Time .
     vars O1 O2 O3 : Oid .
@@ -41,19 +41,19 @@ omod ONBOARDUNIT is
         = < O1 : OnBoardUnit | obuTimer : C monus R > .
 
     *** Store 'd-' messages from `driver` in 
-    *** last field as 'c-' messages.
+    *** lastMsg field as 'c-' messages.
     rl ddec < O1 : OnBoardUnit | >
-        => < O1 : OnBoardUnit | last : cdec > .
+        => < O1 : OnBoardUnit | lastMsg : cdec > .
 
     rl dacc < O1 : OnBoardUnit | >
-        => < O1 : OnBoardUnit | last : cacc > .
+        => < O1 : OnBoardUnit | lastMsg : cacc > .
 
     rl dcoast < O1 : OnBoardUnit | >
-        => < O1 : OnBoardUnit | last : ccoast > .
+        => < O1 : OnBoardUnit | lastMsg : ccoast > .
 
     *** What is the purpose of dummy messages?
     rl dummy < O1 : OnBoardUnit | >
-        => < O1 : OnBoardUnit | last : dummy > .
+        => < O1 : OnBoardUnit | lastMsg : dummy > .
 
     *** Rule applies when timer expires and
     *** the message stored in the on-board unit
@@ -63,7 +63,7 @@ omod ONBOARDUNIT is
             trainComponents : 
                 (
                     REST < O3 : Driver | timer : NZT >
-                    < O1 : OnBoardUnit | obuTimer : 0, last : MSG >
+                    < O1 : OnBoardUnit | obuTimer : 0, lastMsg : MSG >
                 ) 
         >
         => < O2 : Train |
@@ -94,7 +94,7 @@ omod ONBOARDUNIT is
                         MSG *** Pass on message from driver. 
                     fi)
                 fi)
-            REST < O3 : Driver | > < O1 : OnBoardUnit | obuTimer : deltaOBU, last : dummy > >
+            REST < O3 : Driver | > < O1 : OnBoardUnit | obuTimer : deltaOBU, lastMsg : dummy > >
             if not MSG == dummy .
     
     *** Rule applies when timer expires and
@@ -105,7 +105,7 @@ omod ONBOARDUNIT is
             trainComponents :
                 (
                     REST < O3 : Driver | timer : NZT >
-                    < O1 : OnBoardUnit | obuTimer : 0, last : dummy >                
+                    < O1 : OnBoardUnit | obuTimer : 0, lastMsg : dummy >                
                 )
         >
         => < O2 : Train |
@@ -132,7 +132,7 @@ omod ONBOARDUNIT is
                         none
                     fi)
                 fi
-            REST < O3 : Driver | > < O1 : OnBoardUnit | obuTimer : deltaOBU, last : dummy > )> . 
+            REST < O3 : Driver | > < O1 : OnBoardUnit | obuTimer : deltaOBU, lastMsg : dummy > )> . 
             *** Don't know the parenthesis isn't placed the 
             *** same place as in brakeIfNeededAndResetTimer
 endom

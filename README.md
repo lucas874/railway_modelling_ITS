@@ -28,7 +28,7 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
         * The variable `R` (sort `Time`) renamed `T`.
         * The variable `S` (sort `TrainState`) to `TSTATE`.
     * [`onboardunit.maude`](simplemodel6/onboardunit.maude):
-        * The `c` field (sort `time`) in `OnBoardUnit` renamed `obuTimer`.
+        * The `c` and `last` fields (sort `Time` and `Msg`) in `OnBoardUnit` renamed `obuTimer` and `Msg`, respectively.
         * Variables `X` and `V` (both sort `NNegRat`) renamed `POS` and `VEL`, respectively.
     * [`trainplant.maude`](simplemodel6/trainplant.maude):
         * The operations `s, a, d, c`, and `eb` (`-> TrainState [ctor]`) have been
