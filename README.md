@@ -32,7 +32,7 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
     * [`trainplant.maude`](simplemodel6/trainplant.maude):
         * The operations `s, a, d, c`, and `eb` (`-> TrainState [ctor]`) have been
         renamed `stopped, accelerating, decelerating, coasting, emergencyBraking`, respectively.
-        * The variables `T` (sort `Time`)
+        * The variables `R` (sort `Time`), `M` (sort `Msg`) renamed `T` and `MSG`, respectively.
     * The attribute `[ctor]` has been added to constructor operators.
     * Labels added:
         * lala

@@ -25,14 +25,13 @@ omod TRAINPLANT is
 
     var T : Time .
     var O1 : Oid . 
-    var St : TrainState .
 
     *** Again, passage of time does not affect a train plant.
     eq delta(< O1 : TrainPlant | >, T)
         = < O1 : TrainPlant | > .
 
     *** Effects of commands on trainplant
-    var M : Msg .
+    var MSG : Msg .
 
     *** Effect of commands when stopped.
     *** Only the message `cacc` change 
@@ -41,14 +40,14 @@ omod TRAINPLANT is
     *** messages than cacc have been
     *** squeezed into one rule.
     *** 
-    *** Should it say if M = cdec or M = ccoast ...
+    *** Should it say if MSG = cdec or MSG = ccoast ...
     *** To avoid reacting to weirdly typed msgs?
-    *** Or is M =/= cacc fine?
-    crl M < O1 : TrainPlant | currentState : stopped >
+    *** Or is MSG =/= cacc fine?
+    crl MSG < O1 : TrainPlant | currentState : stopped >
         =>
         < O1 : TrainPlant | >
-            if M == cdec or M == ccoast 
-            or M == isb  or M == ieb .
+            if MSG == cdec or MSG == ccoast 
+            or MSG == isb  or MSG == ieb .
 
     rl cacc < O1 : TrainPlant | currentState : stopped >
         =>
@@ -103,10 +102,10 @@ omod TRAINPLANT is
     *** Effects of commands when decelerating
     *** All messages except cdec and isb 
     *** change the current current state.  
-    crl M < O1 : TrainPlant | currentState : decelerating >  
+    crl MSG < O1 : TrainPlant | currentState : decelerating >  
         =>
         < O1 : TrainPlant | >
-            if M == cdec or M == isb .
+            if MSG == cdec or MSG == isb .
 
     rl ccoast < O1 : TrainPlant | currentState : decelerating >  
         =>
