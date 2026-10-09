@@ -10,7 +10,7 @@ omod ONBOARDUNIT is
 
     vars T1 T2 : Time .
     vars O1 O2 O3 : Oid .
-    vars POS VEL D A EOA : NNegRat .
+    vars POS VEL DACC A EOA : NNegRat .
     var REST : Configuration .
     var MSG : Msg .
     var NZT : NzTime .
@@ -24,8 +24,8 @@ omod ONBOARDUNIT is
 
     op brakingDistance : NNegRat NNegRat NNegRat -> NNegRat .
     
-    eq brakingDistance(VEL, D, A)
-        = (predictSpeed(VEL, A) * predictSpeed(VEL, A)) / (2 * D) .
+    eq brakingDistance(VEL, DACC, A)
+        = (predictSpeed(VEL, A) * predictSpeed(VEL, A)) / (2 * DACC) .
 
     op distanceTraveled : NNegRat NNegRat Time -> NNegRat .
     eq distanceTraveled(VEL, A, T2)
