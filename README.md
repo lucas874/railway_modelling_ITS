@@ -42,6 +42,8 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
         renamed `stopped, accelerating, decelerating, coasting, emergencyBraking`, respectively.
         * The variables `R` (sort `Time`), `M` (sort `Msg`) renamed `T` and `MSG`, respectively.
     * [`rbc.maude`](simplemodel6/rbc.maude):
+        * The fields `occ` (map from `Track` to `Bool`) and `pos` (map from `Oid` to `Track`)
+        in the class `RBC` renamed to `occupiedTracks` and `trainPositions`, respectively.
         * The variable `R` (sort `Time`) has been renamed `T`.
     * The attribute `[ctor]` has been added to constructor operators.
     * Labels added:

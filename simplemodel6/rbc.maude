@@ -12,7 +12,7 @@ omod RBC is
     protecting MAP{Track,Bool} * (sort Map{Track,Bool} to MapTrack2Bool) .
     protecting MAP{Oid,Track} * (sort Map{Oid, Track} to MapTrain2Track) .
 
-    class RBC | occupiedTracks : MapTrack2Bool, pos : MapTrain2Track .
+    class RBC | occupiedTracks : MapTrack2Bool, trainPositions : MapTrain2Track .
 
     vars T1, T2 : Track .
     *** If a train is occupying track `TRK` then 
@@ -21,7 +21,7 @@ omod RBC is
     var N : Nat .
     *** If a train with the id `ID` is on track `TRK` then 
     *** `OCCMAP[ID] = TRK`,
-    *** otherwise... what? Undefined?
+    *** otherwise... what? Some sort of undefined?
     var POSMAP : MapTrain2Track .
     vars O1 O2 O3 O4 O5 O6 : Oid .
     var T : Time .
@@ -74,33 +74,33 @@ omod RBC is
     *** Last train, but not on exit.
     crl [lastTrainNotExit] :
         updateChange(O1, T2)
-        < O2 : RBC | occupiedTracks : OCCMAP, pos : POSMAP >
+        < O2 : RBC | occupiedTracks : OCCMAP, trainPositions : POSMAP >
         => 
         eoaMA(maxTrainID,
                 computeMA(T2, 
                           freeTracksAhead(T2, insert(T2, true, insert(prev(T2), false, OCCMAP)))))
         < O2 : RBC | occupiedTracks : insert(T2, true, insert(prev(T2), false, OCCMAP)),
-                     pos : insert(maxTrainID, T2, POSMAP)
+                     trainPositions : insert(maxTrainID, T2, POSMAP)
         >
         if T2 =/= Exit and O1 == maxTrainID .
 
     *** Not last train, but not on exit.
     crl [notLastOnExit] : 
         updateChange(O1, Exit)
-        < O2 : RBC | occupiedTracks : OCCMAP, pos : POSMAP >
+        < O2 : RBC | occupiedTracks : OCCMAP, trainPositions : POSMAP >
         => 
         eoaMA(O1 + 1, 
             computeMA(POSMAP[O1 + 1], 
                       freeTracksAhead(POSMAP[O1 + 1], insert(Exit, true, insert(prev(Exit), false, OCCMAP)))))
         < O2 : RBC | occupiedTracks : insert(Exit, true, insert(prev(Exit), false, OCCMAP)),
-                     pos : insert(O1, Exit, POSMAP)
+                     trainPositions : insert(O1, Exit, POSMAP)
         >
         if O1 < maxTrainID . 
 
     *** Not last train and not on exit.
     crl [updateMovementAuthority] :
         updateChange(O1, T2)
-        < O2 : RBC | occupiedTracks : OCCMAP, pos : POSMAP >
+        < O2 : RBC | occupiedTracks : OCCMAP, trainPositions : POSMAP >
         => 
         eoaMA(O1, computeMA(T2, 
                             freeTracksAhead(T2, insert(T2, true, insert(prev(T2), false, OCCMAP)))))
@@ -108,7 +108,7 @@ omod RBC is
               computeMA(POSMAP[O1 + 1], 
                         freeTracksAhead(POSMAP[O1 + 1], insert(T2, true, insert(prev(T2), false, OCCMAP)))))
         < O2 : RBC | occupiedTracks : insert(T2, true, insert(prev(T2), false, OCCMAP)),
-                     pos : insert(O1, T2, POSMAP)
+                     trainPositions : insert(O1, T2, POSMAP)
         >
         if O1 < maxTrainID and T2 =/= Exit .
 endom

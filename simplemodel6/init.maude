@@ -28,7 +28,7 @@ omod INITIAL-STATES is
                 < OBU1 : OnBoardUnit | obuTimer : deltaOBU, lastMsg : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
-        < RBC1 : RBC | occupiedTracks : (Entry |-> true), pos : (1 |-> Entry) >
+        < RBC1 : RBC | occupiedTracks : (Entry |-> true), trainPositions : (1 |-> Entry) >
     } .
 
     eq initWithDriver = {
@@ -40,7 +40,7 @@ omod INITIAL-STATES is
                 < OBU1 : OnBoardUnit | obuTimer : deltaOBU, lastMsg : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
-        < RBC1 : RBC | occupiedTracks : (Entry |-> true), pos : (1 |-> Entry) >
+        < RBC1 : RBC | occupiedTracks : (Entry |-> true), trainPositions : (1 |-> Entry) >
     } .
 
     eq initWithDriverOptimalConst = {
@@ -50,7 +50,7 @@ omod INITIAL-STATES is
                 < OBU1 : OnBoardUnit | obuTimer : deltaOBU, lastMsg : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
-        < RBC1 : RBC | occupiedTracks : (Entry |-> true), pos : (1 |-> Entry) >
+        < RBC1 : RBC | occupiedTracks : (Entry |-> true), trainPositions : (1 |-> Entry) >
     } .
 
     eq initTwoTrainsWithDrivers = {
@@ -69,6 +69,6 @@ omod INITIAL-STATES is
                 < OBU2 : OnBoardUnit | obuTimer : deltaOBU + shift, lastMsg : dummy >
                 < TC2 : TrackComputation | timerTC : deltaTC + shift, oldTrack : Entry >
         >
-        < RBC1 : RBC | occupiedTracks : (Entry |-> true), pos : (1 |-> Entry, 2 |-> Entry) >
+        < RBC1 : RBC | occupiedTracks : (Entry |-> true), trainPositions : (1 |-> Entry, 2 |-> Entry) >
     } . 
 endom
