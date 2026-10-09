@@ -8,7 +8,7 @@ omod ONBOARDUNIT is
     *** TODO: Rename `c` call it timer or something.
     class OnBoardUnit | obuTimer : Time, lastMsg : Msg .
 
-    vars C R : Time .
+    vars T1 R : Time .
     vars O1 O2 O3 : Oid .
     vars POS VEL D A EOA : NNegRat .
     var REST : Configuration .
@@ -33,12 +33,12 @@ omod ONBOARDUNIT is
 
     *** The `mte` (maximum time elapse) of 
     *** `OnBoardUnit` is the value of its timer.
-    eq mte(< O1 : OnBoardUnit | obuTimer : C >) = C .
+    eq mte(< O1 : OnBoardUnit | obuTimer : T1 >) = T1 .
 
     *** The `delta` of the `OnBoardUnit` class
     *** decrases the timer of `OnBoardUnit`.
-    eq delta(< O1 : OnBoardUnit | obuTimer : C >, R)
-        = < O1 : OnBoardUnit | obuTimer : C monus R > .
+    eq delta(< O1 : OnBoardUnit | obuTimer : T1 >, R)
+        = < O1 : OnBoardUnit | obuTimer : T1 monus R > .
 
     *** Store 'd-' messages from `driver` in 
     *** lastMsg field as 'c-' messages.
