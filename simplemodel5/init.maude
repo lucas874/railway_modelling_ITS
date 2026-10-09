@@ -1,0 +1,233 @@
+
+omod INITIAL-STATES is
+  including RBC .
+
+  ops tR2 tP1 tP2 oBU1 oBU2 rBC1 tC1 tC2 dR1 dR2
+      goodDriver goodDriver2 : -> Oid .
+  op X : -> NNegRat .
+  op shift : -> NNegRat .
+ 
+  
+  *** Define various system parameters:
+  *** eq maxTrainID = 2 .     *** Be aware! Do later
+  eq isbc = 3550/36 .
+  eq ebc = 100 .
+--- eq deltaOBU = 12/10 + shift .  
+--- eq deltaTCM = 3/10 .
+--- eq deltaDriver = 3 . 
+  
+
+  ops init1 initWithDriver initTwoTrainsWithDrivers initWithDriverOptimalConst : -> GlobalSystem .
+---  op initDebug  : -> ClockedSystem .
+  eq init1 = 
+     {eoaMA(1, 40000)
+      < 1 : Train | x : 0, v : 0, eoa : 0,
+                    trainComponents :
+		      < tP1 : TrainPlant | currentState : a >
+                      < oBU1 : OnBoardUnit | c : deltaOBU,
+		                             last : dummy >
+                      < tC1 : TrackComputation | c : deltaTCM,
+		                                 oldTrack : Entry > >
+      < rBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >} .
+
+
+  eq initWithDriver = 
+     {eoaMA(1, 629)
+      < 1 : Train | x : 0, v : 0, eoa : 0,
+                    trainComponents :
+		     < goodDriver : Driver | timer : deltaDriver >
+		                             
+		      < tP1 : TrainPlant | currentState : a >
+                      < oBU1 : OnBoardUnit | c : deltaOBU ,
+		                             last : dummy >
+                      < tC1 : TrackComputation | c : deltaTCM,
+		                                 oldTrack : Entry > >
+      < rBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >} .
+
+
+
+ eq initWithDriverOptimalConst = 
+      {< 1 : Train | x : 0, v : 70, eoa : 44784,
+                    trainComponents :
+		     < goodDriver : Driver | timer : deltaDriver >
+		                             
+		      < tP1 : TrainPlant | currentState : c >
+                      < oBU1 : OnBoardUnit | c : deltaOBU ,
+		                             last : dummy >
+                      < tC1 : TrackComputation | c : deltaTCM,
+		                                 oldTrack : Entry > >
+      < rBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >} .
+
+
+
+
+  eq initTwoTrainsWithDrivers = 
+     {eoaMA(1, 629)
+      < 1 : Train | x : 0, v : 0, eoa : 0,
+                    trainComponents :
+		      < goodDriver : Driver | timer : deltaDriver >
+		      < tP1 : TrainPlant | currentState : a >
+                      < oBU1 : OnBoardUnit | c : deltaOBU ,
+		                             last : dummy >
+                      < tC1 : TrackComputation | c : deltaTCM,
+		                                 oldTrack : Entry > >
+      < 2 : Train | x : 0, v : 0, eoa : 0,
+                    trainComponents :
+		      < goodDriver2 : Driver | timer : deltaDriver >
+		      < tP2 : TrainPlant | currentState : s >
+                      < oBU2 : OnBoardUnit | c : deltaOBU + shift ,
+		                             last : dummy >
+                      < tC2 : TrackComputation | c : deltaTCM + shift ,  
+		                                 oldTrack : Entry  > >
+    < rBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry, 2 |-> Entry) >} .
+
+
+
+--- start of experiments, basic check here in this file.
+
+
+*** set the paramenters: two trains, 350, no shift. 
+***  eq maxTrainID = 2 .    
+***  eq timeLimit = 350 .
+--- eq shift = 0 .    *** eq shift = 1/10 .
+
+endom
+eof .
+
+---(set tick def 3/10 . ) 
+--- we can check also these - but note: change to 1 train/no driver needed.
+--- rew init1 in time 0 .
+--- rew initWithDriver in time 0 .
+
+*** rew initTwoTrainsWithDrivers in time 0 .
+
+
+
+
+
+eof .
+
+---(
+result ClockedSystem: {< rBC1 : RBC |
+       occ : (Entry |-> false, 8DG |-> false, 2DG |-> false, SFG |-> false,
+    6441G |-> false, 6459G |-> false, 6479G |-> false, 6499G |-> false, 6585G
+    |-> false, 6603G |-> false, 6623G |-> false, 6641G |-> false, 6661G |->
+    false, 6679G |-> true, 6697G |-> false, 6717G |-> false, 6735G |-> false,
+    6753G |-> false, 6771G |-> true),
+       pos : (1 |-> 6771G, 2 |-> 6679G) >
+< 1 : Train |
+       x : 2858499/100,
+       v : 951/10,
+       eoa : 38663,
+       trainComponents : (< tP1 : TrainPlant |
+       currentState : d >
+< oBU1 : OnBoardUnit |
+       c : 3/5 >
+< tC1 : TrackComputation |
+       c : 3/10,
+       oldTrack : 6771G >
+< goodDriver : Driver |
+       timer : 6/5 >) >
+< 2 : Train |
+       x : 1933029/100,
+       v : 861/10,
+       eoa : 27400,
+       trainComponents : (< tP2 : TrainPlant |
+       currentState : d >
+< oBU2 : OnBoardUnit |
+       c : 3/5 >
+< tC2 : TrackComputation |
+       c : 3/10,
+       oldTrack : 6679G >
+< goodDriver2 : Driver |
+       timer : 6/5 >) >}  in time 1749/5
+)---
+
+
+---( **** The same result (note no shift)
+result ClockedSystem: {< rBC1 : RBC | occ : (Entry |-> false, 8DG |-> false,
+    2DG |-> false, SFG |-> false, 6441G |-> false, 6459G |-> false, 6479G |->
+    false, 6499G |-> false, 6585G |-> false, 6603G |-> false, 6623G |-> false,
+    6641G |-> false, 6661G |-> false, 6679G |-> true, 6697G |-> false, 6717G
+    |-> false, 6735G |-> false, 6753G |-> false, 6771G |-> true), pos : (1 |->
+    6771G, 2 |-> 6679G) > < 1 : Train | x : 2858499/100, v : 951/10, eoa :
+    38663, trainComponents : (< tP1 : TrainPlant | currentState : d > < oBU1 :
+    OnBoardUnit | c : 3/5 > < tC1 : TrackComputation | c : 3/10, oldTrack :
+    6771G > < goodDriver : Driver | timer : 6/5 >) > < 2 : Train | x :
+    1933029/100, v : 861/10, eoa : 27400, trainComponents : (< tP2 : TrainPlant
+    | currentState : d > < oBU2 : OnBoardUnit | c : 3/5 > < tC2 :
+    TrackComputation | c : 3/10, oldTrack : 6679G > < goodDriver2 : Driver |
+    timer : 6/5 >) >}  in time 1749/5
+Maude>
+
+
+*** The same with shift
+rewrite in INITIAL-STATES : initTwoTrainsWithDrivers in time 0 .
+rewrites: 1938264 in 590ms cpu (594ms real) (3282083 rewrites/second)
+result ClockedSystem: {< rBC1 : RBC | occ : (Entry |-> false, 8DG |-> false,
+    2DG |-> false, SFG |-> false, 6441G |-> false, 6459G |-> false, 6479G |->
+    false, 6499G |-> false, 6585G |-> false, 6603G |-> false, 6623G |-> false,
+    6641G |-> false, 6661G |-> false, 6679G |-> true, 6697G |-> false, 6717G
+    |-> false, 6735G |-> false, 6753G |-> false, 6771G |-> true), pos : (1 |->
+    6771G, 2 |-> 6679G) > < 1 : Train | x : 11437799/400, v : 1901/20, eoa :
+    38663, trainComponents : (< tP1 : TrainPlant | currentState : d > < oBU1 :
+    OnBoardUnit | c : 1/2 > < tC1 : TrackComputation | c : 1/5, oldTrack :
+    6771G > < goodDriver : Driver | timer : 11/10 >) > < 2 : Train | x :
+    3862507/200, v : 853/10, eoa : 27400, trainComponents : (< tP2 : TrainPlant
+    | currentState : d > < oBU2 : OnBoardUnit | c : 3/5 > < tC2 :
+    TrackComputation | c : 3/10, oldTrack : 6679G > < goodDriver2 : Driver |
+    timer : 11/10 >) >}  in time 3499/10
+
+---
+---Without shift,  dummy, seems ok.
+rewrite in INITIAL-STATES : initTwoTrainsWithDrivers in time 0 .
+rewrites: 1540762 in 476ms cpu (478ms real) (3232236 rewrites/second)
+result ClockedSystem: {< rBC1 : RBC | occ : (Entry |-> false, 8DG |-> false,
+    2DG |-> false, SFG |-> false, 6441G |-> false, 6459G |-> false, 6479G |->
+    false, 6499G |-> false, 6585G |-> false, 6603G |-> false, 6623G |-> false,
+    6641G |-> false, 6661G |-> false, 6679G |-> false, 6697G |-> true, 6717G
+    |-> false, 6735G |-> false, 6753G |-> false, 6771G |-> false, 6789G |->
+    true), pos : (1 |-> 6789G, 2 |-> 6697G) > < 1 : Train | x : 1473021/50, v :
+    96, eoa : 40069, trainComponents : (< tP1 : TrainPlant | currentState : a >
+    < oBU1 : OnBoardUnit | c : 3/5, last : cacc(1) > < tC1 : TrackComputation |
+    c : 3/10, oldTrack : 6789G > < goodDriver : Driver | timer : 6/5 >) > < 2 :
+    Train | x : 502092/25, v : 438/5, eoa : 29265, trainComponents : (< tP2 :
+    TrainPlant | currentState : a > < oBU2 : OnBoardUnit | c : 3/5, last :
+    cacc(2) > < tC2 : TrackComputation | c : 3/10, oldTrack : 6697G > <
+    goodDriver2 : Driver | timer : 6/5 >) >}  in time 1749/5
+
+
+--- Nov 4, pos x slightly different
+rewrite in INITIAL-STATES : initTwoTrainsWithDrivers in time 0 .
+rewrites: 1493579 in 481ms cpu (483ms real) (3103960 rewrites/second)
+result ClockedSystem: {< rBC1 : RBC | occ : (Entry |-> false, 8DG |-> false,
+    2DG |-> false, SFG |-> false, 6441G |-> false, 6459G |-> false, 6479G |->
+    false, 6499G |-> false, 6585G |-> false, 6603G |-> false, 6623G |-> false,
+    6641G |-> false, 6661G |-> false, 6679G |-> true, 6697G |-> false, 6717G
+    |-> false, 6735G |-> false, 6753G |-> false, 6771G |-> false, 6789G |->
+    true), pos : (1 |-> 6789G, 2 |-> 6679G) > < 1 : Train | x : 2933919/100, v
+    : 951/10, eoa : 40069, trainComponents : (< tP1 : TrainPlant | currentState
+    : d > < oBU1 : OnBoardUnit | c : 3/5, last : dummy > < tC1 :
+    TrackComputation | c : 3/10, oldTrack : 6789G > < goodDriver : Driver |
+    timer : 6/5 >) > < 2 : Train | x : 998253/50, v : 432/5, eoa : 29265,
+    trainComponents : (< tP2 : TrainPlant | currentState : a > < oBU2 :
+    OnBoardUnit | c : 3/5, last : dummy > < tC2 : TrackComputation | c : 3/10,
+    oldTrack : 6679G > < goodDriver2 : Driver | timer : 6/5 >) >}  in time
+    1749/5
+
+)---
+
+
+eof .
+This is just material we used for debugging.
+
+---(
+ eq initDebug = 
+ {< rBC1 : RBC | occ : (Entry |-> false, 8DG |-> false,
+    2DG |-> false, SFG |-> false, 6441G |-> true), pos : 1 |-> 6441G >
+    < 1 : Train | x : 2450, v : 70, eoa : 12611,
+                  trainComponents : (< tP1 : TrainPlant | currentState : a > < oBU1 : OnBoardUnit | c : 1/5, last : ccoast >
+		  < tC1 : TrackComputation | c : 2, oldTrack : 6441G >
+   < goodDriver : Driver | timer : 70 >) >}  in time 0 .
+
+)---

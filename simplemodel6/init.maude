@@ -1,0 +1,74 @@
+*******************************
+******* Initial states  *******
+*******************************
+
+omod INITIAL-STATES is 
+    including RBC .
+    
+    ops TP1 TP2 OBU1 OBU2 RBC1 TC1 TC2 
+        GoodDriver1 GoodDriver2 : -> Oid .
+        *** Actually a "monkey driver"
+
+    op X : -> NNegRat .
+    op shift : -> NNegRat .
+
+    eq isbc = 3550/36 .
+    eq ebc = 100 .
+
+
+    *** Initial states used for executing model.
+    ops init1 initWithDriver initTwoTrainsWithDrivers
+        initWithDriverOptimalConst : -> GlobalSystem .
+
+    eq init1 = {
+        eoaMA(1, 40000)
+        < 1 : Train | position : 0, velocity : 0, eoa : 0,
+            trainComponents : 
+                < TP1 : TrainPlant | currentState : a >
+                < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
+                < TC1 : TrackComputation | timerTC : deltaTCM, oldTrack : Entry >
+        >
+        < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >
+    } .
+
+    eq initWithDriver = {
+        eoaMA(1, 629)
+        < 1 : Train | position : 0, velocity : 0, eoa : 0,
+            trainComponents : 
+                < GoodDriver1 : Driver | timer : deltaDriver >
+                < TP1 : TrainPlant | currentState : a >
+                < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
+                < TC1 : TrackComputation | timerTC : deltaTCM, oldTrack : Entry >
+        >
+        < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >
+    } .
+
+    eq initWithDriverOptimalConst = {
+        < 1 : Train | position : 0, velocity : 70, eoa : 44784,
+            trainComponents : 
+                < TP1 : TrainPlant | currentState : c > 
+                < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
+                < TC1 : TrackComputation | timerTC : deltaTCM, oldTrack : Entry >
+        >
+        < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >
+    } .
+
+    eq initTwoTrainsWithDrivers = {
+        eoaMA(1, 629)
+        < 1 : Train | position : 0, velocity : 0, eoa : 0,
+            trainComponents : 
+                < GoodDriver1 : Driver | timer : deltaDriver >
+                < TP1 : TrainPlant | currentState : a > 
+                < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
+                < TC1 : TrackComputation | timerTC : deltaTCM, oldTrack : Entry >  
+        >
+        < 2 : Train | position : 0, velocity : 0, eoa : 0, 
+            trainComponents : 
+                < GoodDriver2 : Driver | timer : deltaDriver >
+                < TP2 : TrainPlant | currentState : s > 
+                < OBU2 : OnBoardUnit | c : deltaOBU + shift, last : dummy >
+                < TC2 : TrackComputation | timerTC : deltaTCM + shift, oldTrack : Entry >
+        >
+        < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry, 2 |-> Entry) >
+    } . 
+endom

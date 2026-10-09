@@ -1,0 +1,95 @@
+*** 22 October 2025, change from 5 tracks to 7 tracks ahead.
+
+view Track from TRIV to TRACK is
+      sort Elt to Track .
+endv
+
+
+omod RBC is 
+  protecting TRACKCOMPUTATION .
+  protecting MAP{Track,Bool} * (sort Map{Track,Bool} to MapTrack2Bool) .
+  protecting MAP{Oid,Track} * (sort Map{Oid,Track} to MapTrain2Track) .
+
+  *** REMOVE NEWTRACK
+  *** To initialize all trains are on entry and occupation mapp is all false.
+  *** Start system with EOA to EOA1 - discuss this
+
+  class RBC | occ : MapTrack2Bool, pos : MapTrain2Track . 
+  
+
+  vars T1, T2 : Track .
+  var OCCMAP : MapTrack2Bool . 
+  var N : Nat .
+  var POSMAP : MapTrain2Track .
+  vars O1 O2 O3 O4 O5 O6 : Oid .
+  vars TR1 TR2 TP1 TP2 OBU1 OBU2 RBC1 TC1 TC2 DR1 DR2 : Oid .
+
+  var R : Time .
+
+  eq mte(< O1 : RBC | >) = INF .
+
+
+  op maxTrainID : -> Nat .
+
+  --- Train names are numbers ...
+  subsort Nat < Oid .
+
+  *** optimize with minimun of 5.
+  op freeTracksAhead : Track MapTrack2Bool -> Nat .
+
+  ceq freeTracksAhead (T1, OCCMAP)
+    = 0 if ((T1 == Exit) or OCCMAP[next(T1)] == true) . 
+
+  ceq freeTracksAhead (T1, OCCMAP)
+    = min(5, (1 + freeTracksAhead(next(T1), OCCMAP))) if T1 =/= Exit .
+
+  --- how far can the train go from a given track
+  op computeMA : Track Oid -> Nat .
+
+  eq computeMA(T1, 0) = end(T1) .
+  eq computeMA(T1, 1) = end(next(T1)) .
+  ceq computeMA(T1, N) = computeMA(next(T1), N - 1) if N > 1 .
+
+  eq delta(< O1 : RBC | >, R) 
+     = < O1 : RBC | >  .
+
+  *** Last train but not on exit.
+ crl [lastTrainNotExit] :
+     updateChange(O1, T2)
+     < O2 : RBC | occ : OCCMAP, pos : POSMAP >  
+     => 
+      eoaMA(maxTrainID,
+            computeMA(T2, freeTracksAhead(T2,
+	                insert(T2, true, insert(prev(T2), false, OCCMAP))))) 
+      < O2 : RBC | occ : insert(T2, true, insert(prev(T2), false, OCCMAP)) , 
+                   pos : insert(maxTrainID, T2, POSMAP) >  
+     if T2 =/= Exit and O1 == maxTrainID .
+
+  *** Not last train but on exit
+ crl [notLastOnExit] :
+     updateChange(O1, Exit) < O2 : RBC | occ : OCCMAP, pos : POSMAP >  
+     => 
+     eoaMA(O1 + 1, computeMA(POSMAP[O1 + 1],
+              freeTracksAhead(POSMAP[O1 + 1],
+	          insert(Exit, true, insert(prev(Exit), false, OCCMAP))))) 
+      < O2 : RBC | occ : insert(Exit, true, insert(prev(Exit), false, OCCMAP)), 
+                   pos : insert(O1, Exit, POSMAP) >  
+     if O1 < maxTrainID .
+
+
+  *** Not last train and not on exit
+  
+ crl [updateMovementAuthority] :
+     updateChange(O1, T2)
+     < O2 : RBC | occ : OCCMAP, pos : POSMAP >  
+     => 
+     eoaMA(O1, computeMA(T2, freeTracksAhead(T2, insert(T2, true, insert(prev(T2), false, OCCMAP))))) 
+      eoaMA(O1 + 1, computeMA(POSMAP[O1 + 1], freeTracksAhead(POSMAP[O1 + 1],
+                     insert(T2, true, insert(prev(T2), false, OCCMAP))))) 
+      < O2 : RBC | occ : insert(T2, true, insert(prev(T2), false, OCCMAP))  , 
+                   pos : insert(O1, T2, POSMAP) >  
+     if O1 < maxTrainID and T2 =/= Exit .
+
+endom
+
+

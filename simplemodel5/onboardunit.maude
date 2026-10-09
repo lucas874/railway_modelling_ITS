@@ -1,0 +1,136 @@
+*************************
+*** Onbiard unit ***
+*************************
+
+--- May 24:
+---   Now an inner component of Train.
+--- October 24:
+---   attribute: last to store the last command, no command given, then last = dummy.
+
+
+omod ONBOARDUNIT is 
+  protecting DRIVER .
+  
+  class OnBoardUnit | c : Time , last : Msg .
+  ---   c is now a timer!
+
+  var T : Track .
+  vars C R : Time .
+  vars O1 O2 O3 Id : Oid .
+  vars X V D A EOA : NNegRat .
+  var REST : Configuration .
+  var MSG : Msg .
+  var NZT : NzTime .
+ 
+  
+  op deltaOBU : -> Time .
+
+  op isbc : -> NNegRat .
+
+  op ebc : -> NNegRat .
+
+  op predictSpeed : NNegRat NNegRat -> NNegRat .
+  eq predictSpeed(V, A) =  V + A * deltaOBU  .
+
+  op brakingDistance : NNegRat NNegRat NNegRat -> NNegRat .
+  eq brakingDistance(V, D, A)
+   = (predictSpeed(V, A) * predictSpeed(V, A)) / (2 * D)  .
+
+  op distanceTraveled : NNegRat NNegRat Time -> NNegRat .
+  eq distanceTraveled(V, A, R)
+   = (V * R) + (1/2 * A) * (R * R) .
+
+  ***
+  eq mte(< O1 : OnBoardUnit | c : C >) =  C .
+  eq delta(< O1 : OnBoardUnit | c : C >, R)
+   = < O1 : OnBoardUnit | c : C monus R > .
+
+
+--- store msg from driver: [MS: ok]
+  rl ddec < O1 : OnBoardUnit | >
+     =>
+     < O1 : OnBoardUnit | last : cdec > .
+
+ rl dacc < O1 : OnBoardUnit | >
+     =>
+     < O1 : OnBoardUnit | last : cacc > .
+
+ rl dcoast < O1 : OnBoardUnit | >
+     =>
+     < O1 : OnBoardUnit | last : ccoast > .
+
+
+--- does this cause more states?
+ rl dummy < O1 : OnBoardUnit | >
+     =>
+     < O1 : OnBoardUnit | last : dummy > .
+
+
+
+--- timer expired:
+ crl [brakeIfNeededAndResetTimer] :
+     < O2 : Train | v : V, x : X, eoa : EOA, 
+                    trainComponents :
+		       (REST < O3 : Driver | timer : NZT  >
+		             < O1 : OnBoardUnit | c : 0 , last : MSG  >) >
+   =>
+     < O2 : Train |
+        trainComponents : 
+         (if  (X + distanceTraveled(V, acc, deltaOBU) + brakingDistance(V, ebdacc, acc)
+             >= EOA)  --- ensure that train can stop before end of movement authority
+	    or
+	    V >= ebc 
+	 then ieb   --- emergency braking
+	 else (if (X + distanceTraveled(V, acc,deltaOBU) +
+	              brakingDistance(V, dacc, acc) >= EOA)
+		    or
+		    V >= isbc
+               then isb   ---braking 
+	       else MSG fi) fi)     --- pass msg from driver on.
+	  REST < O3 : Driver |  > < O1 : OnBoardUnit | c : deltaOBU, last : dummy > >  if not MSG == dummy . --- and noCommandIn(REST) .
+	             
+
+
+
+
+--- timer expired:
+ rl [brakeIfNeededAndResetTimer] :
+     < O2 : Train | v : V, x : X, eoa : EOA, 
+                    trainComponents :
+		       (REST < O3 : Driver | timer : NZT  >
+		             < O1 : OnBoardUnit | c : 0 , last : dummy  >) >
+   =>
+     < O2 : Train |
+        trainComponents : 
+         (if  (X + distanceTraveled(V, acc, deltaOBU) + brakingDistance(V, ebdacc, acc)
+             >= EOA)  --- ensure that train can stop before end of movement authority
+	    or
+	    (V >= ebc) 
+	 then ieb   --- emergency braking
+	 else (if (X + distanceTraveled(V, acc,deltaOBU) +
+	              brakingDistance(V, dacc, acc) >= EOA)
+		    or
+		    V >= isbc
+               then isb   ---braking 
+	       else none fi) fi     --- pass msg from driver on.
+	  REST < O3 : Driver |  > < O1 : OnBoardUnit | c : deltaOBU, last : dummy >) >  . 
+
+ 
+
+
+
+endom
+
+
+
+
+
+
+eof
+
+{< rBC1 : RBC | occ : (Entry |-> false, 8DG |-> false,
+    2DG |-> false, SFG |-> false, 6441G |-> true), pos : 1 |-> 6441G > < 1 :
+    Train | x : 123201/50, v : 351/5, eoa : 12611, trainComponents : (< tP1 :
+    TrainPlant | currentState : a > < oBU1 : OnBoardUnit | c : 0, last : ccoast
+    > < tC1 : TrackComputation | c : 9/5, oldTrack : 6441G > < goodDriver :
+    Driver | timer : 349/5 >) >}

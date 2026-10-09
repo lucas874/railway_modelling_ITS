@@ -1,0 +1,98 @@
+*************************
+*** Train ***
+*************************
+
+--- May '24: Change to hierarchical model.
+
+omod TRAIN is 
+  protecting TRAINPLANT .
+  
+  class Train | x : NNegRat, v : NNegRat, eoa : Nat,
+                trainComponents : Configuration .
+
+  op acc : -> NNegRat .
+  eq acc = 1 .
+
+  op dacc : -> NNegRat .
+  eq dacc = 1/2 .  ---1
+
+  op ebdacc : -> NNegRat .
+  eq ebdacc = 1 .  ---2
+
+  vars P1 P2 : Nat .
+  var R : Time .
+  var O1 O2 Id1 Id2 : Oid .
+  vars X V : NNegRat .
+  var REST : Configuration .
+
+  eq mte(< O1 : Train | trainComponents : REST >)
+   = mte(REST) .
+
+  *** coasting
+  eq delta(< O2 : Train | x : X, v : V,
+                          trainComponents :
+                           (< O1 : TrainPlant | currentState : c > REST) >, R)
+   = < O2 : Train | x : X + V * R, 
+                    trainComponents :
+		      (< O1 : TrainPlant | > delta(REST, R)) > .
+
+   *** stop
+  eq delta(< O2 : Train | trainComponents :
+                            (< O1 : TrainPlant | currentState : s > REST) >, R) 
+   = < O2 : Train | trainComponents : (< O1 : TrainPlant | > delta(REST, R)) > .
+
+   *** accelerate
+  eq delta(< O2 : Train | x : X, v : V,
+                          trainComponents :
+                           (< O1 : TrainPlant | currentState : a > REST) >, R)
+  = < O2 : Train | x : X + V * R + (1/2 * acc * R * R),
+                   v : V + (acc * R),
+                   trainComponents : (< O1 : TrainPlant | > delta(REST, R)) > .
+
+  *** decelerate
+  eq delta(< O2 : Train | x : X, v : V,
+                          trainComponents :
+                           (< O1 : TrainPlant | currentState : d > REST) >, R)
+   = < O2 : Train | x : (X + V * R) monus (1/2 * dacc * R * R),
+                    v : V monus (dacc * R),
+		    trainComponents : (< O1 : TrainPlant | > delta(REST, R)) > .
+
+   *** emercency break decelerate
+  eq delta(< O2 : Train | x : X, v : V,
+                          trainComponents :
+                           (< O1 : TrainPlant | currentState : eb > REST) >, R)
+   = < O2 : Train | x : (X + V * R) monus (1/2 * ebdacc * R * R),
+                    v : V monus (ebdacc * R),
+                    trainComponents : (< O1 : TrainPlant | > delta(REST, R)) > .
+
+
+  *** Reached 0 velocity when braking
+  rl < O2 : Train | v : 0,
+                    trainComponents :
+                           (< O1 : TrainPlant | currentState : d > REST) >
+   => < O2 : Train | trainComponents :
+                           (< O1 : TrainPlant | currentState : s > REST) > .
+
+   *** Reached 0 velocity when emergency braking
+  rl < O2 : Train | v : 0,
+                    trainComponents :
+                           (< O1 : TrainPlant | currentState : eb > REST) >
+   => < O2 : Train | trainComponents :
+                           (< O1 : TrainPlant | currentState : s > REST) > .
+
+
+
+ ***  *** Update EoA
+ ***  rl eoaMA(O2, P2) < O2 : Train | >  
+ ***    => < O2 : Train | eoa : P2 > .
+
+
+*** only update if larger ! note dangerous!
+crl eoaMA(O2, P2) < O2 : Train | eoa : P1 >  
+    => < O2 : Train | eoa : P2 >  if P2 > P1 . 
+
+crl eoaMA(O2, P2) < O2 : Train | eoa : P1 >  
+    => < O2 : Train |  >  if P2 <= P1 . 
+
+endom
+

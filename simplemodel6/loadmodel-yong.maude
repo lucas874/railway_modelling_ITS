@@ -1,0 +1,30 @@
+*******************************
+******** Load modules  ********
+*******************************
+
+load rtm-prelude-short.maude
+
+load staticdata-yong.maude 
+
+load msgs-with-timebound.maude
+
+load trainplant.maude 
+
+load train-param-1-2.maude
+
+load driver.maude
+--- load driver-optimal.maude
+
+ 
+load onboardunit.maude
+
+
+load trackcomputation.maude
+
+
+load rbc.maude
+
+
+
+*** Initialisation. First run.
+load init.maude

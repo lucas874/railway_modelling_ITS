@@ -1,0 +1,95 @@
+*******************************
+************ Train ************
+*******************************
+
+omod TRAIN is
+    protecting TRAINPLANT .
+
+    *** Class representing a train.
+    *** `position` is the position of the train (in whatever unit of length we use).
+    *** `velocity` is the velocity of the train.
+    *** `eoa` is the location on the railway line to which the 
+    *** train is allowed to move (given in whatever unit of length we use). 
+    *** TODO: rename x and v.
+    class Train | position : NNegRat, velocity : NNegRat, 
+        eoa : Nat, trainComponents : Configuration .
+
+    *** Constants.
+    *** Acceleration.
+    op acc : -> NNegRat .
+    eq acc = 1 .
+
+    *** Deceleration.
+    *** Call dec instead? Or confused with decrement that way?
+    op dacc : -> NNegRat .
+    eq dacc = 1/2 .
+
+    *** Emergency breaking.
+    op ebdacc : -> NNegRat .
+    eq ebdacc = 1 .
+
+    vars EOA1 EOA2 : Nat .
+    var T : Time .
+    vars O1 O2 ID1 ID2 : Oid .
+    vars POS VEL : NNegRat .
+    var REST : Configuration .
+    var TSTATE : TrainState .
+
+    *** The `mte` of a train is the `mte`
+    *** of its components. 
+    eq mte(< O1 : Train | trainComponents : REST >)
+        = mte(REST) .
+
+    *** Effects of passage of time on train
+    *** when in different states.
+    *** Coasting.
+    eq delta(< O2 : Train | position : POS, velocity : VEL, 
+        trainComponents : (< O1 : TrainPlant | currentState : c > REST) >, T)
+        = < O2 : Train | position : POS + VEL * T, 
+        trainComponents : (< O1 : TrainPlant | > delta(REST, T)) > .
+
+    *** Stopped.
+    eq delta(< O2 : Train | 
+        trainComponents : (< O1 : TrainPlant | currentState : s > REST) >, T)
+        = < O2 : Train | 
+            trainComponents : (< O1 : TrainPlant | > delta(REST, T)) > .
+
+    *** Accelerating.
+    eq delta(< O2 : Train | position : POS, velocity : VEL, 
+        trainComponents : (< O1 : TrainPlant | currentState : a > REST) >, T)
+        = < O2 : Train | position : POS + VEL * T + (1/2 * acc * T * T), 
+            velocity : VEL + (acc * T),
+            trainComponents : (< O1 : TrainPlant | > delta(REST, T)) > .
+
+    *** Decelerating.
+    eq delta(< O2 : Train | position : POS, velocity : VEL, 
+        trainComponents : (< O1 : TrainPlant | currentState : d > REST) >, T)
+        = < O2 : Train | position : (POS + VEL * T) monus (1/2 * dacc * T * T), 
+            velocity : VEL monus (dacc * T),
+            trainComponents : (< O1 : TrainPlant | > delta(REST, T)) > .
+
+    *** Emergency breaking. 
+    eq delta(< O2 : Train | position : POS, velocity : VEL, 
+        trainComponents : (< O1 : TrainPlant | currentState : eb > REST) >, T)
+        = < O2 : Train | position : (POS + VEL * T) monus (1/2 * ebdacc * T * T), 
+            velocity : VEL monus (ebdacc * T),
+            trainComponents : (< O1 : TrainPlant | > delta(REST, T)) > .
+
+    *** Train has velocity of 0 and is in the 
+    *** decelerating or emergency braking state.
+    *** In original this is to rl rules: one for d and one for eb
+    crl < O2 : Train | velocity : 0,
+        trainComponents : (< O1 : TrainPlant | currentState : TSTATE > REST) >
+        => < O2 : Train | 
+        trainComponents : (< O1 : TrainPlant | currentState : s > REST) >
+            if TSTATE == d or TSTATE == eb .
+
+    *** Update EoA (end of authority).
+    *** Only update if larger.
+    *** Original states that this is DANGEROUS.
+    crl eoaMA(O2, EOA2) < O2 : Train | eoa : EOA1 >
+        => < O2 : Train | eoa : EOA2 > if EOA2 > EOA1 .
+
+    crl eoaMA(O2, EOA2) < O2 : Train | eoa : EOA1 >
+        => < O2 : Train | > if EOA2 <= EOA1 .
+endom

@@ -1,0 +1,145 @@
+*************************
+*** Train Plant ***
+*************************
+
+omod TRAINPLANT is protecting MSGS .
+  sort TrainState .
+   
+  ops s a d c eb : -> TrainState .
+  
+
+  class TrainPlant | currentState : TrainState .
+  
+  eq mte(< O1 : TrainPlant | >) = INF .
+
+  var R : Time .
+  var O1 Id : Oid .
+  var St : TrainState .
+
+
+
+  eq delta(< O1 : TrainPlant | >, R) 
+     =
+     < O1 : TrainPlant | >  .
+
+
+  ********** Stopped
+
+  rl cdec < O1 : TrainPlant | currentState : s >  
+     =>
+     < O1 : TrainPlant | > .
+
+  rl ccoast < O1 : TrainPlant | currentState : s >  
+     =>
+     < O1 : TrainPlant |  > .
+
+   rl  isb  < O1 : TrainPlant | currentState : s >  
+     =>
+     < O1 : TrainPlant |  >  .
+
+  rl ieb < O1 : TrainPlant | currentState : s >  
+     =>
+     < O1 : TrainPlant |  > .
+
+  rl cacc < O1 : TrainPlant | currentState : s >  
+     =>
+     < O1 : TrainPlant | currentState : a > .
+
+  ********** acc
+
+  rl cdec < O1 : TrainPlant | currentState : a >  
+     =>
+     < O1 : TrainPlant | currentState : d > .
+
+  rl cacc  < O1 : TrainPlant | currentState : a >  
+     =>
+     < O1 : TrainPlant | > .  
+ 
+  rl ccoast < O1 : TrainPlant | currentState : a >  
+     =>
+     < O1 : TrainPlant | currentState : c > .
+
+  rl isb  < O1 : TrainPlant | currentState : a >  
+     =>
+     < O1 : TrainPlant | currentState : d > .
+ 
+  rl ieb < O1 : TrainPlant | currentState : a >  
+     =>
+     < O1 : TrainPlant | currentState : eb > .  
+
+  ********** coast
+
+  rl cdec  < O1 : TrainPlant | currentState : c >  
+     =>
+     < O1 : TrainPlant | currentState : d > .
+ 
+  rl ccoast  < O1 : TrainPlant | currentState : c >  
+     =>
+     < O1 : TrainPlant | > . 
+   
+  rl isb < O1 : TrainPlant | currentState : c >  
+     =>
+     < O1 : TrainPlant | currentState : d > .
+
+  rl ieb < O1 : TrainPlant | currentState : c >  
+     =>
+     < O1 : TrainPlant | currentState : eb > .
+
+  rl cacc < O1 : TrainPlant | currentState : c >  
+     =>
+     < O1 : TrainPlant | currentState : a > .
+
+
+  ********** dec
+
+  rl cdec < O1 : TrainPlant | currentState : d >  
+     =>
+     < O1 : TrainPlant |  >  .
+
+  rl ccoast < O1 : TrainPlant | currentState : d >  
+     =>
+     < O1 : TrainPlant | currentState : c > .  
+
+  rl isb < O1 : TrainPlant | currentState : d >  
+     =>
+     < O1 : TrainPlant | > .  
+
+  rl ieb < O1 : TrainPlant | currentState : d >  
+     =>
+     < O1 : TrainPlant | currentState : eb > .
+ 
+  rl cacc  < O1 : TrainPlant | currentState : d >  
+     =>
+     < O1 : TrainPlant | currentState : a > . 
+
+  ********** eb
+
+  rl cdec < O1 : TrainPlant | currentState : eb >  
+     =>
+     < O1 : TrainPlant |  >  .
+
+  rl ccoast < O1 : TrainPlant | currentState : eb >  
+     =>
+     < O1 : TrainPlant | >  .
+
+  rl cacc < O1 : TrainPlant | currentState : eb >  
+     =>
+     < O1 : TrainPlant | >  .
+  
+  rl isb < O1 : TrainPlant | currentState : eb >  
+     =>
+     < O1 : TrainPlant | >  .
+
+  rl ieb < O1 : TrainPlant | currentState : eb >  
+     =>
+     < O1 : TrainPlant | >  .
+
+  --- deal with dummymsg
+   rl dummymsg < O1 : TrainPlant | >  
+     =>
+     < O1 : TrainPlant | >  .
+
+endom
+
+
+

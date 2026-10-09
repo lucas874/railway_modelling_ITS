@@ -1,0 +1,109 @@
+*******************************
+*** Messages and Data Types ***
+*******************************
+
+view Oid from TRIV to CONFIGURATION is
+    sort Elt to Oid .
+endv
+
+omod MSGS is 
+    protecting LYNTRACKPLAN . 
+
+    *** Timebound for time-bounded simulation:
+    op timeLimit : -> Time [ctor] .
+
+    msg updateChange : Oid Track -> Msg [ctor] .
+    *** eoa is end of authority 
+    *** (location on track to which train is permitted 
+    *** to move in whatever unit of length we use). 
+    *** MA is movement authority 
+    *** (signal granting permission to move. 
+    *** MA in out model is given as a position in 
+    *** whatever unit of length we use).
+    msg eoaMA : Oid Nat -> Msg .
+
+    *** Commands to control velocity issued by driver.
+    *** Consumed by the OBU (on board unit).
+    msgs dacc ddec dcoast : -> Msg [ctor] .
+
+    *** Commands for train plant to accelerate,
+    *** decelerate, coast, and brake.
+    *** Driver issues commands to the OBU,
+    *** which sends messages below to the train plant. 
+    msgs cacc cdec ccoast isb ieb : ->  Msg [ctor] .
+
+    *** TODO: find out what this is for.
+    msg dummy : -> Msg [ctor] .
+
+    vars REST CURRENT : Configuration .
+    var MSG : Msg .
+
+    *** Tick rule. 
+    *** Compute deltas for elements of the configuration
+    *** -- decreasing timers by `R` -- and advance time. With
+    *** `R` being the maximum time that can elapse before  
+    *** *something* must happen according to the configuration.
+    vars R R1 : Time .
+    
+    *** Add something like and if not all finished to condition.
+    *** or !all_finished(CURRENT) with all_finished being something
+    *** like all trains in exit.
+    *** 
+    *** Something like
+    *** op allFinished : CONF -> Bool [frozen]
+    *** eq allFinished < T: Train | trackComputation : track > CONF
+    *** = false if T =/= Exit. 
+    *** eq allFinished CONF = true [owise]
+    crl [tick] : {CURRENT} in time T:Time
+            => {delta(CURRENT, R)} in time R + T:Time
+        if R := mte(CURRENT) /\ R =/= 0 .
+
+    *** Time rules. 
+    *** The operation delta distributes over the 
+    *** elements of a configuration and decreases their timers.
+    vars CON1 CON2 : Configuration .
+    
+    *** `delta` defines what happens with a configuration
+    *** when a certain amount of time passes.
+    *** E.g., what happens to `C` in when `R` time passes: `delta(C, R)`.
+    *** Distributes over the elements in a configuration,
+    *** so we only have to define `delta` for single objects and messages.
+    op delta : Configuration Time -> Configuration [frozen (1)] .
+    
+    eq delta(none, R) = none .
+    ceq delta(CON1 CON2, R) = delta(CON1, R) delta(CON2, R)
+        if CON1 =/= none and CON2 =/= none .
+
+    *** The operation `mte` (maximum time elapse). Defines
+    *** how much time can pass in the configuration 
+    *** before something must happen. Like `delta`, 
+    *** it distributes over the elements in a configuration.
+    op mte : Configuration -> TimeInf [frozen (1)] .
+    
+    eq mte(none) = INF .
+    ceq mte(CON1 CON2) = min(mte(CON1), mte(CON2))
+        if CON1 =/= none and CON2 =/= none .
+    
+    *** Messages are delivered instantaneously.
+    eq mte(MSG) = 0 .
+    eq delta(MSG, R) = MSG .
+
+    *** `noCommandIn` seems to not be in use.
+    *** Referenced in onboardunit.maude, but outcommented.
+    op noCommandIn : Configuration -> Bool [frozen] .
+    
+    ceq noCommandIn(MSG REST) = false 
+        if MSG == dacc or MSG == ddec
+        or MSG == dcoast .
+    eq noCommandIn(REST) = true [owise] .
+
+    *** Used by the operation `timeBound`.
+    op tBound_ : Time -> Object [ctor] .
+    eq mte(tBound R) = R .
+    eq delta(tBound R1, R) = tBound (R1 monus R) .
+    
+    *** Used to run a system for up to some specified number time steps?
+    op _timeBound_ : ClockedSystem Time -> ClockedSystem [frozen] .
+    eq {REST:Configuration} timeBound R = {REST:Configuration (tBound R)} in time 0 .
+    eq {REST:Configuration} in time R1 timeBound R = {REST:Configuration (tBound R)} in time R1 .
+endom

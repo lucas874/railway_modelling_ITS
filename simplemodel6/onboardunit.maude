@@ -1,0 +1,138 @@
+*******************************
+******** On-board unit ********
+*******************************
+
+omod ONBOARDUNIT is 
+    protecting DRIVER .
+
+    *** TODO: Rename `c` call it timer or something.
+    class OnBoardUnit | c : Time, last : Msg .
+
+    vars C R : Time .
+    vars O1 O2 O3 : Oid .
+    vars POS VEL D A EOA : NNegRat .
+    var REST : Configuration .
+    var MSG : Msg .
+    var NZT : NzTime .
+
+    op deltaOBU : -> Time .
+    op isbc : -> NNegRat .
+    op ebc : -> NNegRat .
+
+    op predictSpeed : NNegRat NNegRat -> NNegRat .
+    eq predictSpeed(VEL, A) = VEL + A * deltaOBU .
+
+    op brakingDistance : NNegRat NNegRat NNegRat -> NNegRat .
+    
+    eq brakingDistance(VEL, D, A)
+        = (predictSpeed(VEL, A) * predictSpeed(VEL, A)) / (2 * D) .
+
+    op distanceTraveled : NNegRat NNegRat Time -> NNegRat .
+    eq distanceTraveled(VEL, A, R)
+        = (VEL * R) + (1/2 * A) * (R * R) .
+
+    *** The `mte` (maximum time elapse) of 
+    *** `OnBoardUnit` is the value of its timer.
+    eq mte(< O1 : OnBoardUnit | c : C >) = C .
+
+    *** The `delta` of the `OnBoardUnit` class
+    *** decrases the timer of `OnBoardUnit`.
+    eq delta(< O1 : OnBoardUnit | c : C >, R)
+        = < O1 : OnBoardUnit | c : C monus R > .
+
+    *** Store 'd-' messages from `driver` in 
+    *** last field as 'c-' messages.
+    rl ddec < O1 : OnBoardUnit | >
+        => < O1 : OnBoardUnit | last : cdec > .
+
+    rl dacc < O1 : OnBoardUnit | >
+        => < O1 : OnBoardUnit | last : cacc > .
+
+    rl dcoast < O1 : OnBoardUnit | >
+        => < O1 : OnBoardUnit | last : ccoast > .
+
+    *** What is the purpose of dummy messages?
+    rl dummy < O1 : OnBoardUnit | >
+        => < O1 : OnBoardUnit | last : dummy > .
+
+    *** Rule applies when timer expires and
+    *** the message stored in the on-board unit
+    *** is not `dummy`.
+    crl [brakeIfNeededAndResetTimer] : 
+        < O2 : Train | position : POS, velocity : VEL, eoa : EOA,
+            trainComponents : 
+                (
+                    REST < O3 : Driver | timer : NZT >
+                    < O1 : OnBoardUnit | c : 0, last : MSG >
+                ) 
+        >
+        => < O2 : Train |
+            trainComponents :
+                *** This `if then else` statement 
+                *** generates a message to be 
+                *** consumed by the trainplant.
+                (if 
+                    *** Ensure that train can stop before
+                    *** end of movement authority 
+                    *** If we reach beyond EOA, by 
+                    *** continuing as now for one
+                    *** on-board period then emergency
+                    *** brake now to stop before EOA.
+                    POS + distanceTraveled(VEL, acc, deltaOBU) 
+                       + brakingDistance(VEL, ebdacc, acc) >= EOA
+                or
+                    VEL >= ebc
+                    then ieb *** Emergency braking.
+                else
+                    (if 
+                        (POS + distanceTraveled(VEL, acc, deltaOBU)
+                           + brakingDistance(VEL, dacc, acc) >= EOA)
+                    or
+                        VEL >= isbc
+                        then isb *** Service braking.
+                    else 
+                        MSG *** Pass on message from driver. 
+                    fi)
+                fi)
+            REST < O3 : Driver | > < O1 : OnBoardUnit | c : deltaOBU, last : dummy > >
+            if not MSG == dummy .
+    
+    *** Rule applies when timer expires and
+    *** the message stored in the on-board unit
+    *** is `dummy`.
+    rl [brakeIfNeededAndResetTimerDummy] : 
+        < O2 : Train | position : POS, velocity : VEL, eoa : EOA,
+            trainComponents :
+                (
+                    REST < O3 : Driver | timer : NZT >
+                    < O1 : OnBoardUnit | c : 0, last : dummy >                
+                )
+        >
+        => < O2 : Train |
+            trainComponents :
+                *** This `if then else` statement 
+                *** generates a message to be 
+                *** consumed by the trainplant.
+                (if
+                    *** Ensure that train can stop before
+                    *** end of movement authority 
+                    POS + distanceTraveled(VEL, acc, deltaOBU) 
+                       + brakingDistance(VEL, ebdacc, acc) >= EOA
+                or
+                    VEL >= ebc
+                    then ieb *** Emergency braking.
+                else
+                    (if
+                        POS + distanceTraveled(VEL, acc, deltaOBU)
+                          + brakingDistance(VEL, dacc, acc) >= EOA
+                    or
+                        VEL >= isbc
+                        then isb *** Service braking.
+                    else 
+                        none
+                    fi)
+                fi
+            REST < O3 : Driver | > < O1 : OnBoardUnit | c : deltaOBU, last : dummy > )> . 
+            *** Don't know the parenthesis isn't placed the 
+            *** same place as in brakeIfNeededAndResetTimer
+endom

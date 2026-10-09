@@ -1,0 +1,57 @@
+*******************************
+****** Track Computation ******
+*******************************
+
+omod TRACKCOMPUTATION is 
+    protecting ONBOARDUNIT .
+
+    *** Consider changing the name of oldTrack to currentTrack
+    class TrackComputation | oldTrack : Track, timerTC : Time .
+
+    var TRK : Track .
+    vars T1 T2 : Time .
+    vars O1 O2 : Oid .
+    var POS : NNegRat .
+    var REST : Configuration .
+
+    op deltaTCM : -> Time .
+
+    *** The `mte` (maximum time elapse) of 
+    *** `TrackComputation` is the value of its timer.
+    eq mte(< O1 : TrackComputation | timerTC : T1 >) = T1 .
+
+    *** The `delta` of the `TrackComputation` class
+    *** decrases the timer of `TrackComputation`.
+    eq delta(< O1 : TrackComputation | timerTC : T1 >, T2)
+        = < O1 : TrackComputation | timerTC : T1 monus T2 > .
+
+    *** Applies when train reached a new track section.
+    *** Emit a `updateChange` message, which is 
+    *** consumed by the RBC. Resets timer.
+    crl [timerExpiredAndTrackChange] : 
+        < O2 : Train | position : POS, trainComponents :
+            REST 
+            < O1 : TrackComputation | timerTC : 0, oldTrack : TRK > 
+        >
+        => updateChange(O2, track(POS))
+        < O2 : Train | trainComponents : 
+            REST
+            < O1 : TrackComputation |
+               timerTC : deltaTCM, oldTrack : track(POS)
+            >
+        >
+        if TRK =/= track(POS) .
+
+    *** Reset timer without and stay on same track section.
+    crl [timerExpiredAndNoTrackChange] : 
+        < O2 : Train | position : POS, trainComponents :
+            REST
+            < O1 : TrackComputation | timerTC : 0, oldTrack : TRK >
+        >
+        => 
+        < O2 : Train | trainComponents : 
+            REST
+            < O1 : TrackComputation | timerTC : deltaTCM >
+        >
+        if TRK == track(POS) .
+endom

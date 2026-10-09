@@ -1,0 +1,242 @@
+*** Properties; we analyze the properties mentioned in Section 3.9,
+*** page 13, of May draft
+-------------------------------------------------------------------
+
+
+
+omod CHECK-PROPERTIES3 is
+  including INITIAL-STATES .
+
+*** set the paramenters: 1 train, Yongs timings and longer Exit.
+  eq maxTrainID = 1 .    
+---  eq timeLimit =  510 .   --- needs 603 to reach exit [monkey], not needed because of timebound
+  eq deltaDriver = 70 .
+  eq shift = 0 .           ---1/11 .
+  eq deltaTCM = 3 .        --- was 6/10 .
+  eq deltaOBU = 18/10  .   ---  16/10 + shift .  
+
+
+endom 
+
+
+***********************************************
+***1:how long does 1 train need to exit?
+***Demonstration that it needs 603 to get to Exit.
+***********************************************
+
+---rew initWithDriver in time 0 .
+---rew initWithDriverOptimalConst in time 0 .
+
+rew initWithDriver timeBound 594 .  --- now instead of 603 needs 594, reaches EXIT
+
+eof .
+
+***(
+
+rewrite in CHECK-PROPERTIES3 : initWithDriver timeBound 603 .
+rewrites: 258176 in 93ms cpu (93ms real) (2769118 rewrites/second)
+result ClockedSystem: {tBound 9 updateChange(1, Exit) < rBC1 : RBC | occ : (
+    Entry |-> false, 8DG |-> false, 2DG |-> false, SFG |-> false, 6441G |->
+    false, 6459G |-> false, 6479G |-> false, 6499G |-> false, 6585G |-> false,
+    6603G |-> false, 6623G |-> false, 6641G |-> false, 6661G |-> false, 6679G
+    |-> false, 6697G |-> false, 6717G |-> false, 6735G |-> false, 6753G |->
+    false, 6771G |-> false, 6789G |-> false, 6809G |-> false, 6827G |-> false,
+    6845G |-> false, 6865G |-> false, 6883G |-> false, 6897G |-> false, 3DG |->
+    false, 5-9DG |-> false, 11-23DG |-> false, 3G |-> true), pos : 1 |-> 3G > <
+    1 : Train | x : 1064583/25, v : 324/5, eoa : 44784, trainComponents : (<
+    tP1 : TrainPlant | currentState : d > < oBU1 : OnBoardUnit | c : 9/5, last
+    : dummy > < tC1 : TrackComputation | c : 3, oldTrack : Exit > < goodDriver
+    : Driver | timer : 36 >) >}  in time 594
+
+
+-with timebound 603. param 0.5-1
+rewrite in CHECK-PROPERTIES3 : initWithDriver timeBound 603 .
+rewrites: 270266 in 87ms cpu (87ms real) (3079322 rewrites/second)
+result ClockedSystem: {tBound 0 updateChange(1, Exit) < rBC1 : RBC | occ : (
+    Entry |-> false, 8DG |-> false, 2DG |-> false, SFG |-> false, 6441G |->
+    false, 6459G |-> false, 6479G |-> false, 6499G |-> false, 6585G |-> false,
+    6603G |-> false, 6623G |-> false, 6641G |-> false, 6661G |-> false, 6679G
+    |-> false, 6697G |-> false, 6717G |-> false, 6735G |-> false, 6753G |->
+    false, 6771G |-> false, 6789G |-> false, 6809G |-> false, 6827G |-> false,
+    6845G |-> false, 6865G |-> false, 6883G |-> false, 6897G |-> false, 3DG |->
+    false, 5-9DG |-> false, 11-23DG |-> false, 3G |-> true), pos : 1 |-> 3G > <
+    1 : Train | x : 4258251/100, v : 441/10, eoa : 44784, trainComponents : (<
+    tP1 : TrainPlant | currentState : d > < oBU1 : OnBoardUnit | c : 9/5, last
+    : dummy > < tC1 : TrackComputation | c : 3, oldTrack : Exit > < goodDriver
+    : Driver | timer : 27 >) >}  in time 603
+
+
+***without timebound
+***answer 603 until detected., 602: train is on Exit, but needs to be detected.
+result ClockedSystem: {updateChange(1, Exit) < rBC1 : RBC | occ : (Entry |->
+    false, 8DG |-> false, 2DG |-> false, SFG |-> false, 6441G |-> false, 6459G
+    |-> false, 6479G |-> false, 6499G |-> false, 6585G |-> false, 6603G |->
+    false, 6623G |-> false, 6641G |-> false, 6661G |-> false, 6679G |-> false,
+    6697G |-> false, 6717G |-> false, 6735G |-> false, 6753G |-> false, 6771G
+    |-> false, 6789G |-> false, 6809G |-> false, 6827G |-> false, 6845G |->
+    false, 6865G |-> false, 6883G |-> false, 6897G |-> false, 3DG |-> false,
+    5-9DG |-> false, 11-23DG |-> false, 3G |-> true), pos : 1 |-> 3G > < 1 :
+    Train | x : 10314459/242, v : 2529/55, eoa : 44784, trainComponents : (<
+    tP1 : TrainPlant | currentState : d > < oBU1 : OnBoardUnit | c : 36/55,
+    last : dummy > < tC1 : TrackComputation | c : 3, oldTrack : Exit > <
+    goodDriver : Driver | timer : 27 >) >}  in time 603
+
+)***
+
+
+
+
+
+*****************************************************
+***2:Safe-speed: train never goes beyond 100:
+***Check with 510, 603
+*****************************************************
+
+
+---
+search [1] in CHECK-PROPERTIES3 : initWithDriver  timeBound 510  =>* {
+    REST:Configuration < O:Oid : Train | ATTS:AttributeSet, v : V:NNegRat >} 
+    in time T:Time such that V:NNegRat >= 100 = true .
+---
+
+
+
+
+---(
+510, with param 1-2. - expect pretty the same [166s]
+---but takes longer: 785s + 3  times as many states ????
+
+search [1] in CHECK-PROPERTIES3 : initWithDriver timeBound 510 =>* {
+    REST:Configuration < O:Oid : Train | ATTS:AttributeSet, v : V:NNegRat >} 
+    in time T:Time such that V:NNegRat >= 100 = true .
+
+No solution.
+states: 4100482  rewrites: 945795551 in 785030ms cpu (787743ms real) (1204787
+    rewrites/second)
+Maude> 
+
+
+
+
+
+---result with timebound 510, and paramenters 0.5 and 1.
+
+search [1] in CHECK-PROPERTIES3 : initWithDriver timeBound 510 =>* {
+    REST:Configuration < O:Oid : Train | ATTS:AttributeSet, v : V:NNegRat >} 
+    in time T:Time such that V:NNegRat >= 100 = true .
+
+No solution.
+states: 1590964  rewrites: 373988882 in 171405ms cpu (172305ms real) (2181900
+    rewrites/second)
+Debug(1)> 
+
+---171s = [not completely fresh start, best result = 166s]
+
+
+)---
+
+
+**********************************************************
+*** 3: Safe-MA: A train never exceeds its movement authority:
+**********************************************************
+
+---Test done with init1!  
+search [1] init1  timeBound 510  =>* 
+           {REST:Configuration
+	   < O:Oid : Train | x : X:NNegRat, eoa : EOA:Nat, ATTS:AttributeSet >}
+         such that X:NNegRat > EOA:Nat .
+---
+eof .
+
+---old results not relevant again
+---(result for timebound 350: 40825 states, 10s [Feb4: 3319states, 231ms]
+No solution.
+states: 40825  rewrites: 6985800 in 10524ms cpu (10533ms real) (663789
+    rewrites/second)
+)---
+---result for timebound 510: states 40825, in 2606ms.
+
+
+---(
+search [1] in CHECK-PROPERTIES3 : initWithDriver in time 0 =>* 
+           {REST:Configuration
+	   < O:Oid : Train | x : X:NNegRat, eoa : EOA:Nat, ATTS:AttributeSet >}
+	   in time T:Time
+         such that X:NNegRat > EOA:Nat .
+)---
+
+---(403s!)
+search [1] in CHECK-PROPERTIES3 : initWithDriver in time 0 =>* {
+    REST:Configuration < O:Oid : Train | ATTS:AttributeSet, x : X:NNegRat, eoa
+    : EOA:Nat >}  in time T:Time such that X:NNegRat > EOA:Nat = true .
+
+No solution.
+states: 2175258  rewrites: 456948793 in 403351ms cpu (405219ms real) (1132879
+    rewrites/second)
+
+
+)---
+eof .
+
+---Peter's result for comparison init1!
+--- No solution.
+--- states: 89517  rewrites: 17877791 in 16646ms cpu (16769ms real) (1073960
+---    rewrites/second)-
+
+
+*** SAfe-EB: A train never travels in non-brake mode
+***   after passing its emergency brake intervention location.
+**************************************************************
+
+--- This is some kind of stability property, so we need temporal
+--- logic.  [] (emergencyBrake -> [] (~ non-brake-mode))
+---
+
+load model-checker
+
+omod CHECK-SAFE-EB is including MODEL-CHECKER .
+  including INITIAL-STATES .
+
+  subsort ClockedSystem < State .
+
+  op emergencyBrake : Oid -> Prop [ctor] .
+  op nonBrakeMode : Oid -> Prop [ctor] .
+
+  vars REST REST2 : Configuration .
+  vars TRAIN TP : Oid .
+  var T : Time .
+  var TS : TrainState .
+
+
+  eq {< TRAIN : Train | trainComponents :
+                          (REST2 < TP : TrainPlant | currentState : eb >) >
+      REST} in time T |= emergencyBrake(TRAIN) = true .			  
+
+--- For unbounded, unclocked analysis:
+  eq {< TRAIN : Train | trainComponents :
+                          (REST2 < TP : TrainPlant | currentState : eb >) >
+      REST} |= emergencyBrake(TRAIN) = true .
+
+  eq {< TRAIN : Train | trainComponents :
+                          (REST2 < TP : TrainPlant | currentState : TS >) >
+      REST} in time T |= nonBrakeMode(TRAIN) = (TS == a) or (TS == c) .
+
+  --- unbounded/unclocked version:
+  eq {< TRAIN : Train | trainComponents :
+                          (REST2 < TP : TrainPlant | currentState : TS >) >
+      REST} in time T |= nonBrakeMode(TRAIN) = (TS == a) or (TS == c) .		
+
+
+endom
+
+---(
+red modelCheck(initWithDriver in time 0,
+               [] (emergencyBrake(1) -> [] ~ nonBrakeMode(1))) .
+--- time bound 650, true in 20 seconds
+--- time bound 655, true in 23 seconds
+)---
+
+
+
+
+

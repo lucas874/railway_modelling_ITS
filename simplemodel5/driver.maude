@@ -1,0 +1,47 @@
+omod DRIVER is 
+  protecting TRAIN .
+
+class Driver | timer : Time . 
+  
+  vars R R2 : Time .
+  vars O1 O2 : Oid .
+  var N : NNegRat .
+***  vars X V EOA : NNegRat .
+  var REST : Configuration .
+
+  op deltaDriver : -> NNegRat .
+***  eq deltaDriver = 70 .   
+
+ eq mte(< O1 : Driver | timer : R >) = R .
+ eq delta(< O1 : Driver | timer : R2 >, R)
+   = < O1 : Driver | timer : R2 monus R > .
+
+*** driver issues always dacc, will be stored/"checked" in onboardunit.
+
+
+rl [driverAcc] :
+      < O1 : Driver | timer : 0 >  
+     =>
+     < O1 : Driver | timer : deltaDriver >  dacc  . 
+
+rl [driverCoast] :
+      < O1 : Driver | timer : 0 > 
+     =>
+      < O1 : Driver | timer : deltaDriver > dcoast . 
+     
+
+rl [driverDec] :
+      < O1 : Driver | timer : 0 >  
+     =>
+      < O1 : Driver | timer : deltaDriver > ddec  . 
+  
+     
+    
+
+
+endom
+
+
+
+
+  

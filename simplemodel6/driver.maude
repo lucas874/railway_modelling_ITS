@@ -1,0 +1,37 @@
+*******************************
+*********** Driver  ***********
+*******************************
+
+omod DRIVER is 
+    protecting TRAIN .
+
+    class Driver | timer : Time .
+
+    vars R R2 : Time .
+    vars O1 O2 : Oid .
+    var N : NNegRat .
+    var REST : Configuration .
+    op deltaDriver : -> NNegRat .
+
+    *** The `mte` (maximum time elapse) of 
+    *** `Driver` is the value of its timer.
+    eq mte(< O1 : Driver | timer : R >) = R .
+
+    *** The `delta` of the `Driver` class
+    *** decrases the timer of `Driver`.
+    eq delta(< O1 : Driver | timer : R2 >, R)
+        = < O1 : Driver | timer : R2 monus R > .
+
+    *** Driver issues commands to accelerate/decelerate/brake.
+    *** These are consumed by the on-board unit.
+    *** Non-deterministically selects a command to issue 
+    *** when timer expires.
+    rl [driverAcc] : < O1 : Driver | timer : 0 > 
+        => < O1 : Driver | timer : deltaDriver > dacc .
+
+    rl [driverCoast] : < O1 : Driver | timer : 0 > 
+        => < O1 : Driver | timer : deltaDriver > dcoast .
+    
+    rl [driverDec] : < O1 : Driver | timer : 0 > 
+        => < O1 : Driver | timer : deltaDriver > ddec .
+endom 

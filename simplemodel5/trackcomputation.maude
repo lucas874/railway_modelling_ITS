@@ -1,0 +1,58 @@
+*************************
+*** Track ***
+*************************
+
+omod TRACKCOMPUTATION is 
+  protecting ONBOARDUNIT .
+  
+  *** oldtrack shouldx be initialised to plan.first
+  *** should we have plan, probably not as we import lyn module.
+
+  --- Change (Peter): c is now a TIMER:
+  
+  class TrackComputation |  oldTrack : Track,  c : Time . 
+
+  var T : Track .
+  vars C R : Time .
+  vars O1 O2 : Oid .
+  vars X : NNegRat .
+  var REST : Configuration .
+  
+  op deltaTCM : -> Time .
+
+  ***
+  eq mte(< O1 : TrackComputation | c : C >) = C .
+
+  eq delta(< O1 : TrackComputation | c : C >, R)
+   = < O1 : TrackComputation | c : C monus R > .
+
+  *** deltaTCM timer expired and track change:
+
+  crl [timerExpiredAndTrackChange] :
+      < O2 : Train | x : X,
+                     trainComponents :
+		      REST
+		      < O1 : TrackComputation | c : 0, oldTrack : T > >
+      =>
+      updateChange(O2, track(X))
+      < O2 : Train | trainComponents :
+		      REST 
+                      < O1 : TrackComputation | c : deltaTCM,
+		                                oldTrack : track(X) >  >
+     if T =/= track(X)  .
+
+
+  crl [timerExpiredAndNoTrackChange] :
+      < O2 : Train | x : X,
+                     trainComponents :
+		      REST
+		      < O1 : TrackComputation | c : 0, oldTrack : T > >
+      =>
+      < O2 : Train | trainComponents :
+		      REST 
+                      < O1 : TrackComputation | c : deltaTCM >  >
+     if T == track(X) .
+  
+endom
+
+

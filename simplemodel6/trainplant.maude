@@ -1,0 +1,153 @@
+*******************************
+********* Train Plant *********
+*******************************
+
+*** Model of the the train plaint -- 
+*** the system that receives commands, 
+*** and depending on the command,
+*** makes the train accelerate, decelerate,
+*** coast (maintain current velocity), or brake.
+omod TRAINPLANT is 
+    protecting MSGS .
+    sort TrainState .
+
+    *** States representing train being 
+    *** stopped, accelerating, decelerating,
+    *** coasting, and emergency breaking, respectively.
+    ops s a d c eb : -> TrainState [ctor] .
+
+    *** The train plant.
+    class TrainPlant | currentState : TrainState .
+
+    *** Passage of time does not affect a train plant.
+    eq mte(< O1 : TrainPlant | >) = INF .
+
+    var R : Time .
+    var O1 Id : Oid . 
+    var St : TrainState .
+
+    *** Again, passage of time does not affect a train plant.
+    eq delta(< O1 : TrainPlant | >, R)
+        = < O1 : TrainPlant | > .
+
+    *** Effects of commands on trainplant
+    var M : Msg .
+
+    *** Effect of commands when stopped.
+    *** Only the message `cacc` change 
+    *** the current state. Rules from the
+    *** original file about all other
+    *** messages than cacc have been
+    *** squeezed into one rule.
+    *** 
+    *** Should it say if M = cdec or M = ccoast ...
+    *** To avoid reacting to weirdly typed msgs?
+    *** Or is M =/= cacc fine?
+    crl M < O1 : TrainPlant | currentState : s >
+        =>
+        < O1 : TrainPlant | >
+            if M == cdec or M == ccoast 
+            or M == isb  or M == ieb .
+
+    rl cacc < O1 : TrainPlant | currentState : s >
+        =>
+        < O1 : TrainPlant | currentState : a > .
+
+    *** Effects of commands when accelerating.
+    *** All messages except cacc changes the 
+    *** current state.
+    rl cdec < O1 : TrainPlant | currentState : a >  
+        =>
+        < O1 : TrainPlant | currentState : d > .
+
+    rl cacc  < O1 : TrainPlant | currentState : a >  
+        =>
+        < O1 : TrainPlant | > .  
+
+    rl ccoast < O1 : TrainPlant | currentState : a >  
+        =>
+        < O1 : TrainPlant | currentState : c > .
+
+    rl isb  < O1 : TrainPlant | currentState : a >  
+        =>
+        < O1 : TrainPlant | currentState : d > .
+
+    rl ieb < O1 : TrainPlant | currentState : a >  
+        =>
+        < O1 : TrainPlant | currentState : eb > .  
+
+    *** Effects of commands when coasting.
+    *** All messages except ccoast changes the 
+    *** current state.  
+    rl cdec  < O1 : TrainPlant | currentState : c >  
+        =>
+        < O1 : TrainPlant | currentState : d > .
+
+    rl ccoast  < O1 : TrainPlant | currentState : c >  
+        =>
+        < O1 : TrainPlant | > . 
+
+    rl isb < O1 : TrainPlant | currentState : c >  
+        =>
+        < O1 : TrainPlant | currentState : d > .
+
+    rl ieb < O1 : TrainPlant | currentState : c >  
+        =>
+        < O1 : TrainPlant | currentState : eb > .
+
+    rl cacc < O1 : TrainPlant | currentState : c >  
+        =>
+        < O1 : TrainPlant | currentState : a > .
+
+    *** Effects of commands when decelerating
+    *** All messages except cdec and isb 
+    *** change the current current state.  
+    crl M < O1 : TrainPlant | currentState : d >  
+        =>
+        < O1 : TrainPlant | >
+            if M == cdec or M == isb .
+
+    rl ccoast < O1 : TrainPlant | currentState : d >  
+        =>
+        < O1 : TrainPlant | currentState : c > .  
+
+    rl ieb < O1 : TrainPlant | currentState : d >  
+        =>
+        < O1 : TrainPlant | currentState : eb > .
+
+    rl cacc  < O1 : TrainPlant | currentState : d >  
+        =>
+        < O1 : TrainPlant | currentState : a > . 
+
+    *** Effects of commands when emergency braking.
+    *** No commands change the current state.
+    rl cdec < O1 : TrainPlant | currentState : eb >  
+        =>
+        < O1 : TrainPlant |  >  .
+
+    rl ccoast < O1 : TrainPlant | currentState : eb >  
+        =>
+        < O1 : TrainPlant | >  .
+
+    rl cacc < O1 : TrainPlant | currentState : eb >  
+        =>
+        < O1 : TrainPlant | >  .
+
+    rl isb < O1 : TrainPlant | currentState : eb >  
+        =>
+        < O1 : TrainPlant | >  .
+
+    rl ieb < O1 : TrainPlant | currentState : eb >  
+        =>
+        < O1 : TrainPlant | >  .
+
+    *** Deal with `dummymsg`.
+    *** What does this comment mean? Note
+    *** that `dummymsg` us used in original. 
+    *** Use dummy here instead since 
+    *** `dummymsg` has been removed.
+    ***(rl dummymsg < O1 : TrainPlant | >  
+        =>
+        < O1 : TrainPlant | >  .)
+endom
+

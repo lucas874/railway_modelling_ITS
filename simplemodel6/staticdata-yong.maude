@@ -1,0 +1,187 @@
+*******************************
+********* Data Classes ********
+*******************************
+
+
+*** Model of a track segment. 
+omod TRACK is 
+    including TIMED-OO-PRELUDE .
+    protecting POSRAT-TIME-DOMAIN-WITH-INF .
+
+    sort Track .
+endom
+
+*** View mapping Elt from theory TRIV to Track
+view TrackElt from TRIV to TRACK is 
+    sort Elt to Track .
+endv
+
+*** Model of a track plan.
+omod TRACKPLAN is 
+    protecting TRACK .
+    protecting SET{TrackElt} .
+
+    *** Original has a comment discussing whether 
+    *** or not TrackPlan should be a class instead.
+    sort TrackPlan .
+    op tracks : -> Set{TrackElt} [ctor] .
+    op prev : Track -> Track .
+    op next : Track -> Track .
+    op track : NNegRat -> Track .
+    op end : Track -> NNegRat .
+    *** Ugly name
+    op eoa1 : -> Nat .
+endom
+
+*** Defines some equalities of ops from TRACKPLAN
+*** implementing the running example.
+omod LYNTRACKPLAN is
+    protecting POSRAT-TIME-DOMAIN-WITH-INF .
+    protecting TRACKPLAN .
+    protecting TRACK .
+
+    op lyn : -> TrackPlan .
+
+    ops Entry 8DG 2DG SFG 6441G 6459G 6479G 6499G 
+        6585G 6603G 6623G 6641G 6661G 6679G 6697G 6717G 
+        6735G 6753G 6771G 6789G 6809G 6827G 6845G 6865G 
+        6883G 6897G 3DG 5-9DG 11-23DG 3G Exit : -> Track [ctor] .
+
+    eq tracks = (Entry, 8DG, 2DG, SFG, 6441G, 6459G, 6479G, 6499G,
+        6585G, 6603G, 6623G, 6641G, 6661G, 6679G, 6697G, 6717G,
+        6735G, 6753G, 6771G, 6789G, 6809G, 6827G, 6845G, 6865G,
+        6883G, 6897G, 3DG, 5-9DG, 11-23DG, 3G, Exit) .
+    
+    var N : NNegRat .
+
+    eq prev(8DG) = Entry .
+    eq prev(2DG) = 8DG .
+    eq prev(SFG) = 2DG .
+    eq prev(6441G) = SFG .
+    eq prev(6459G) = 6441G .
+    eq prev(6479G) = 6459G .
+    eq prev(6499G) = 6479G .
+    eq prev(6585G) = 6499G .
+    eq prev(6603G) = 6585G .
+    eq prev(6623G) = 6603G .
+    eq prev(6641G) = 6623G .
+    eq prev(6661G) = 6641G .
+    eq prev(6679G) = 6661G .
+    eq prev(6697G) = 6679G .
+    eq prev(6717G) = 6697G .
+    eq prev(6735G) = 6717G .
+    eq prev(6753G) = 6735G .
+    eq prev(6771G) = 6753G .
+    eq prev(6789G) = 6771G .
+    eq prev(6809G) = 6789G .
+    eq prev(6827G) = 6809G .
+    eq prev(6845G) = 6827G .
+    eq prev(6865G) = 6845G .
+    eq prev(6883G) = 6865G .
+    eq prev(6897G) = 6883G .
+    eq prev(3DG) = 6897G .
+    eq prev(5-9DG) = 3DG .
+    eq prev(11-23DG) = 5-9DG .
+    eq prev(3G) = 11-23DG .
+    eq prev(Exit) = 3G .
+
+    eq next(Entry) = 8DG .
+    eq next(8DG) = 2DG .
+    eq next(2DG) = SFG .
+    eq next(SFG) = 6441G .
+    eq next(6441G) = 6459G .
+    eq next(6459G) = 6479G .
+    eq next(6479G) = 6499G .
+    eq next(6499G) = 6585G .
+    eq next(6585G) = 6603G .
+    eq next(6603G) = 6623G .
+    eq next(6623G) = 6641G .
+    eq next(6641G) = 6661G .
+    eq next(6661G) = 6679G .
+    eq next(6679G) = 6697G .
+    eq next(6697G) = 6717G .
+    eq next(6717G) = 6735G .
+    eq next(6735G) = 6753G .
+    eq next(6753G) = 6771G .
+    eq next(6771G) = 6789G .
+    eq next(6789G) = 6809G .
+    eq next(6809G) = 6827G .
+    eq next(6827G) = 6845G .
+    eq next(6845G) = 6865G .
+    eq next(6865G) = 6883G .
+    eq next(6883G) = 6897G .
+    eq next(6897G) = 3DG .
+    eq next(3DG) = 5-9DG .
+    eq next(5-9DG) = 11-23DG .
+    eq next(11-23DG) = 3G .
+    eq next(3G) = Exit .
+
+    ceq track(N) = Entry if 0 <= N and N <= 20 .
+    ceq track(N) = 8DG if 20 < N and N <= 325 .
+    ceq track(N) = 2DG if 325 < N and N <= 629 .
+    ceq track(N) = SFG if 629 < N and N <= 933 .
+    ceq track(N) = 6441G if 933 < N and N <= 2791 .
+    ceq track(N) = 6459G if 2791 < N and N <= 4711 .
+    ceq track(N) = 6479G if 4711 < N and N <= 6706 .
+    ceq track(N) = 6499G if 6706 < N and N <= 8697 .
+    ceq track(N) = 6585G if 8697 < N and N <= 10636 .
+    ceq track(N) = 6603G if 10636 < N and N <= 12611 .
+    ceq track(N) = 6623G if 12611 < N and N <= 14473 .
+    ceq track(N) = 6641G if 14473 < N and N <= 16338 .
+    ceq track(N) = 6661G if 16338 < N and N <= 18160 .
+    ceq track(N) = 6679G if 18160 < N and N <= 20001 .
+    ceq track(N) = 6697G if 20001 < N and N <= 21957 .
+    ceq track(N) = 6717G if 21957 < N and N <= 23820 .
+    ceq track(N) = 6735G if 23820 < N and N <= 25685 .
+    ceq track(N) = 6753G if 25685 < N and N <= 27400 .
+    ceq track(N) = 6771G if 27400 < N and N <= 29265 .
+    ceq track(N) = 6789G if 29265 < N and N <= 31129 .
+    ceq track(N) = 6809G if 31129 < N and N <= 33009 .
+    ceq track(N) = 6827G if 33009 < N and N <= 34865 .
+    ceq track(N) = 6845G if 34865 < N and N <= 36746 .
+    ceq track(N) = 6865G if 36746 < N and N <= 38663 .
+    ceq track(N) = 6883G if 37663 < N and N <= 40069 .
+    ceq track(N) = 6897G if 40069 < N and N <= 40747 .
+    ceq track(N) = 3DG if 40747 < N and N <= 41050 .
+    ceq track(N) = 5-9DG if 41050 < N and N <= 41423 .
+    ceq track(N) = 11-23DG if 41423 < N and N <= 41702 .
+    ceq track(N) = 3G if 41702 < N and N <= 42514 .
+    ***ceq track(N) = Exit if 42514 < N and N <= 42534 .
+    ceq track(N) = Exit if 42514 < N and N <= 44784 .
+
+    eq end(Entry) = 20 .
+    eq end(8DG) = 325 .
+    eq end(2DG) = 629 .
+    eq end(SFG) = 933 .
+    eq end(6441G) = 2791 .
+    eq end(6459G) = 4711 .
+    eq end(6479G) = 6706 .
+    eq end(6499G) = 8697 .
+    eq end(6585G) = 10636 .
+    eq end(6603G) = 12611 .
+    eq end(6623G) = 14473 .
+    eq end(6641G) = 16338 .
+    eq end(6661G) = 18160 .
+    eq end(6679G) = 20001 .
+    eq end(6697G) = 21957 .
+    eq end(6717G) = 23820 .
+    eq end(6735G) = 25685 .
+    eq end(6753G) = 27400 .
+    eq end(6771G) = 29265 .
+    eq end(6789G) = 31129 .
+    eq end(6809G) = 33009 .
+    eq end(6827G) = 34865 .
+    eq end(6845G) = 36746 .
+    eq end(6865G) = 38663 .
+    eq end(6883G) = 40069 .
+    eq end(6897G) = 40747 .
+    eq end(3DG) = 41050 .
+    eq end(5-9DG) = 41423 .
+    eq end(11-23DG) = 41702 .
+    eq end(3G) = 42514 .
+    ***  eq end(Exit) = 42534 .
+    eq end(Exit) = 44784 .
+
+    *** check xxx in paper. What does this mean?
+    eq eoa1 = 20 .
+endom

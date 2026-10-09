@@ -1,0 +1,117 @@
+
+*******************************
+*** Messages and Data Types ***
+*******************************
+
+view Oid from TRIV to CONFIGURATION is
+    sort Elt to Oid .
+endv
+
+omod MSGS is protecting LYNTRACKPLAN .
+
+    --- Timebound for time-bounded simulation:
+    op timeLimit : -> Time .   *** Don't forget to instantiate me
+
+
+
+    --- msgs expired  : Oid -> Msg .
+
+    msgs updateChange  : Oid Track -> Msg .
+    --- updateChange(fromTrain, new track)
+    --- rbc should read, but we only have one rbc, so
+    --- we do not need the recipient
+
+    msgs eoaMA : Oid Nat -> Msg .
+   
+
+    msgs dacc ddec dcoast cacc cdec ccoast isb ieb : ->  Msg .
+--- [MS] added October 
+    op  dummy : -> Msg .
+    op dummymsg : -> Msg .   --- why 2 different dummy messages? 
+
+    *** Configurations
+    vars REST CURRENT : Configuration .
+    vars CON1 CON2 : Configuration .
+    var MSG : Msg .
+
+
+    *** Tick rule:
+---(    Standard Real-Time Maude tick rule;
+            Not executable, as usual.
+	    For Maude analysis, we therefore use executable
+	    tick rules below:
+    vars R R1 : Time .
+    crl [tick] : {CURRENT} => {delta(CURRENT,R)} in time R
+        if R <= mte(CURRENT) [nonexec] .
+)---	
+
+*** CONCRETE TICK RULE, with time elapse 3/10 in
+***( each step:
+    var R : Time .
+    crl [tick] : {CURRENT} => {delta(CURRENT,R)} in time R
+        if R := 3/10 /\ R <= mte(CURRENT) .
+)***
+
+
+--- TIME-BOUNDED rewriting, up to time timeLimit:
+    vars R R1 : Time .
+    crl [tick] : {CURRENT} in time T:Time
+                => {delta(CURRENT,R)} in time R + T:Time
+        if R := mte(CURRENT) /\ R =/= 0 .
+
+
+
+
+    *** Time rules (note: more defs for objects incl mte in subsequent files)
+    op delta : Configuration Time -> Configuration [frozen (1)]  .
+    eq delta(none, R) = none .
+    ceq delta(CON1 CON2, R) = delta(CON1,R) delta(CON2,R)
+        if CON1 =/= none and CON2 =/= none .
+     
+    *** The mte operation computes the maximum elapsed time.    	
+    op mte : Configuration -> TimeInf [frozen (1)] .
+    eq mte(none) = INF .
+    ceq mte(CON1 CON2) = min(mte(CON1),mte(CON2))
+        if CON1 =/= none and CON2 =/= none .
+
+    --- No message delay in our case:
+ ***   eq mte(updateChange(O:Oid, Exit)) = 0 .  -should not be a special case.
+    eq mte(M:Msg) = 0 .
+    eq delta(M:Msg, R) = M:Msg . 
+    
+
+
+
+    op noCommandIn : Configuration -> Bool [frozen] .
+    ceq noCommandIn (MSG REST) = false if MSG == dacc
+                                       or MSG == ddec
+				       or MSG == dcoast
+				       ---or MSG == cacc
+				       ---or MSG == cdec
+				       ---or MSG == ccoast
+				       ---or MSG == isb
+				       ---or MSG == ieb
+				       ---or MSG == dummy
+				       .
+				       
+    eq noCommandIn(REST) = true [owise] .
+
+
+op tBound_ : Time -> Object [ctor] .
+--- eq tBound 0 = none .
+eq mte(tBound R) = R .
+eq delta(tBound R1, R) = tBound (R1 monus R) .
+
+
+op _timeBound_ : ClockedSystem Time -> ClockedSystem [frozen] .
+eq {REST:Configuration} timeBound R = {REST:Configuration (tBound R)} in time 0 .
+eq {REST:Configuration} in time R1 timeBound R = {REST:Configuration (tBound R)} in time R1 .
+
+
+
+
+endom
+
+
+
+
