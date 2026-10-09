@@ -70,7 +70,7 @@ omod TRAIN is
 
     *** Emergency breaking. 
     eq delta(< O2 : Train | position : POS, velocity : VEL, 
-        trainComponents : (< O1 : TrainPlant | currentState : eb > REST) >, T)
+        trainComponents : (< O1 : TrainPlant | currentState : emergencyBraking > REST) >, T)
         = < O2 : Train | position : (POS + VEL * T) monus (1/2 * ebdacc * T * T), 
             velocity : VEL monus (ebdacc * T),
             trainComponents : (< O1 : TrainPlant | > delta(REST, T)) > .
@@ -78,12 +78,12 @@ omod TRAIN is
     *** Train has velocity of 0 and is in the 
     *** decelerating or emergency braking state.
     *** In original this is to rl rules: one for decelerating 
-    *** and one for emergencyBreaking
+    *** and one for emergencyBraking
     crl < O2 : Train | velocity : 0,
         trainComponents : (< O1 : TrainPlant | currentState : TSTATE > REST) >
         => < O2 : Train | 
         trainComponents : (< O1 : TrainPlant | currentState : stopped > REST) >
-            if TSTATE == decelerating or TSTATE == eb .
+            if TSTATE == decelerating or TSTATE == emergencyBraking .
 
     *** Update EoA (end of authority).
     *** Only update if larger.

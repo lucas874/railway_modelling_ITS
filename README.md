@@ -31,7 +31,7 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
         * Variables `X` and `V` (both sort `NNegRat`) renamed `POS` and `VEL`, respectively.
     * [`trainplant.maude`](simplemodel6/trainplant.maude):
         * The operations `s, a, d, c`, and `eb` (`-> TrainState [ctor]`) have been
-        renamed `stopped, accelerating, decelerating, coasting, emergencyBreaking`, respectively.
+        renamed `stopped, accelerating, decelerating, coasting, emergencyBraking`, respectively.
     * The attribute `[ctor]` has been added to constructor operators.
     * Labels added:
         * lala
@@ -39,5 +39,5 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
         * [`train-param-1-2.maude`](simplemodel6/train-param-1-2.maude): 
             * Rule stopping transitioning to `TrainState` `stopped`
             when velocity is 0 and `currentState` is `decelerating`
-            or `emergencyBreaking`. Used to be two rules. 
+            or `emergencyBraking`. Used to be two rules. 
     * All field name and variable renamings are propagated to other files referencing these fields/variables.

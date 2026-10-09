@@ -212,12 +212,12 @@ omod CHECK-SAFE-EB is including MODEL-CHECKER .
 
 
   eq {< TRAIN : Train | trainComponents :
-                          (REST2 < TP : TrainPlant | currentState : eb >) >
+                          (REST2 < TP : TrainPlant | currentState : emergencyBraking >) >
       REST} in time T |= emergencyBrake(TRAIN) = true .			  
 
 --- For unbounded, unclocked analysis:
   eq {< TRAIN : Train | trainComponents :
-                          (REST2 < TP : TrainPlant | currentState : eb >) >
+                          (REST2 < TP : TrainPlant | currentState : emergencyBraking >) >
       REST} |= emergencyBrake(TRAIN) = true .
 
   eq {< TRAIN : Train | trainComponents :

@@ -15,7 +15,7 @@ omod TRAINPLANT is
     *** stopped, accelerating, decelerating,
     *** coasting, and emergency breaking, respectively.
     ops stopped accelerating decelerating 
-        coasting eb : -> TrainState [ctor] .
+        coasting emergencyBraking : -> TrainState [ctor] .
 
     *** The train plant.
     class TrainPlant | currentState : TrainState .
@@ -75,7 +75,7 @@ omod TRAINPLANT is
 
     rl ieb < O1 : TrainPlant | currentState : accelerating  >  
         =>
-        < O1 : TrainPlant | currentState : eb > .  
+        < O1 : TrainPlant | currentState : emergencyBraking > .  
 
     *** Effects of commands when coasting.
     *** All messages except ccoast changes the 
@@ -94,7 +94,7 @@ omod TRAINPLANT is
 
     rl ieb < O1 : TrainPlant | currentState : coasting >  
         =>
-        < O1 : TrainPlant | currentState : eb > .
+        < O1 : TrainPlant | currentState : emergencyBraking > .
 
     rl cacc < O1 : TrainPlant | currentState : coasting >  
         =>
@@ -114,7 +114,7 @@ omod TRAINPLANT is
 
     rl ieb < O1 : TrainPlant | currentState : decelerating >  
         =>
-        < O1 : TrainPlant | currentState : eb > .
+        < O1 : TrainPlant | currentState : emergencyBraking > .
 
     rl cacc < O1 : TrainPlant | currentState : decelerating >  
         =>
@@ -122,23 +122,23 @@ omod TRAINPLANT is
 
     *** Effects of commands when emergency braking.
     *** No commands change the current state.
-    rl cdec < O1 : TrainPlant | currentState : eb >  
+    rl cdec < O1 : TrainPlant | currentState : emergencyBraking >  
         =>
         < O1 : TrainPlant |  >  .
 
-    rl ccoast < O1 : TrainPlant | currentState : eb >  
+    rl ccoast < O1 : TrainPlant | currentState : emergencyBraking >  
         =>
         < O1 : TrainPlant | >  .
 
-    rl cacc < O1 : TrainPlant | currentState : eb >  
+    rl cacc < O1 : TrainPlant | currentState : emergencyBraking >  
         =>
         < O1 : TrainPlant | >  .
 
-    rl isb < O1 : TrainPlant | currentState : eb >  
+    rl isb < O1 : TrainPlant | currentState : emergencyBraking >  
         =>
         < O1 : TrainPlant | >  .
 
-    rl ieb < O1 : TrainPlant | currentState : eb >  
+    rl ieb < O1 : TrainPlant | currentState : emergencyBraking >  
         =>
         < O1 : TrainPlant | >  .
 
