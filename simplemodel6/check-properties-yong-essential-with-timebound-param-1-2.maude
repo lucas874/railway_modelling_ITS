@@ -47,7 +47,7 @@ result ClockedSystem: {tBound 9 updateChange(1, Exit) < rBC1 : RBC | occ : (
     6845G |-> false, 6865G |-> false, 6883G |-> false, 6897G |-> false, 3DG |->
     false, 5-9DG |-> false, 11-23DG |-> false, 3G |-> true), pos : 1 |-> 3G > <
     1 : Train | x : 1064583/25, v : 324/5, eoa : 44784, trainComponents : (<
-    tP1 : TrainPlant | currentState : d > < oBU1 : OnBoardUnit | c : 9/5, last
+    tP1 : TrainPlant | currentState : decelerating > < oBU1 : OnBoardUnit | c : 9/5, last
     : dummy > < tC1 : TrackComputation | timerTC : 3, oldTrack : Exit > < goodDriver
     : Driver | timer : 36 >) >}  in time 594
 
@@ -64,7 +64,7 @@ result ClockedSystem: {tBound 0 updateChange(1, Exit) < rBC1 : RBC | occ : (
     6845G |-> false, 6865G |-> false, 6883G |-> false, 6897G |-> false, 3DG |->
     false, 5-9DG |-> false, 11-23DG |-> false, 3G |-> true), pos : 1 |-> 3G > <
     1 : Train | x : 4258251/100, v : 441/10, eoa : 44784, trainComponents : (<
-    tP1 : TrainPlant | currentState : d > < oBU1 : OnBoardUnit | c : 9/5, last
+    tP1 : TrainPlant | currentState : decelerating > < oBU1 : OnBoardUnit | c : 9/5, last
     : dummy > < tC1 : TrackComputation | timerTC : 3, oldTrack : Exit > < goodDriver
     : Driver | timer : 27 >) >}  in time 603
 
@@ -80,7 +80,7 @@ result ClockedSystem: {updateChange(1, Exit) < rBC1 : RBC | occ : (Entry |->
     false, 6865G |-> false, 6883G |-> false, 6897G |-> false, 3DG |-> false,
     5-9DG |-> false, 11-23DG |-> false, 3G |-> true), pos : 1 |-> 3G > < 1 :
     Train | x : 10314459/242, v : 2529/55, eoa : 44784, trainComponents : (<
-    tP1 : TrainPlant | currentState : d > < oBU1 : OnBoardUnit | c : 36/55,
+    tP1 : TrainPlant | currentState : decelerating > < oBU1 : OnBoardUnit | c : 36/55,
     last : dummy > < tC1 : TrackComputation | timerTC : 3, oldTrack : Exit > <
     goodDriver : Driver | timer : 27 >) >}  in time 603
 

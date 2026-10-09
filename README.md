@@ -33,4 +33,11 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
         * The operations `s, a, d, c`, and `eb` (`-> TrainState [ctor]`) have been
         renamed `stopped, accelerating, decelerating, coasting, emergencyBreaking`, respectively.
     * The attribute `[ctor]` has been added to constructor operators.
+    * Labels added:
+        * lala
+    * Merged rewrite rules:
+        * [`train-param-1-2.maude`](simplemodel6/train-param-1-2.maude): 
+            * Rule stopping transitioning to `TrainState` `stopped`
+            when velocity is 0 and `currentState` is `decelerating`
+            or `emergencyBreaking`. Used to be two rules. 
     * All field name and variable renamings are propagated to other files referencing these fields/variables.

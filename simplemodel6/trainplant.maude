@@ -14,7 +14,7 @@ omod TRAINPLANT is
     *** States representing train being 
     *** stopped, accelerating, decelerating,
     *** coasting, and emergency breaking, respectively.
-    ops stopped accelerating d c eb : -> TrainState [ctor] .
+    ops stopped accelerating decelerating c eb : -> TrainState [ctor] .
 
     *** The train plant.
     class TrainPlant | currentState : TrainState .
@@ -58,7 +58,7 @@ omod TRAINPLANT is
     *** current state.
     rl cdec < O1 : TrainPlant | currentState : accelerating  >  
         =>
-        < O1 : TrainPlant | currentState : d > .
+        < O1 : TrainPlant | currentState : decelerating > .
 
     rl cacc < O1 : TrainPlant | currentState : accelerating  >  
         =>
@@ -70,7 +70,7 @@ omod TRAINPLANT is
 
     rl isb  < O1 : TrainPlant | currentState : accelerating  >  
         =>
-        < O1 : TrainPlant | currentState : d > .
+        < O1 : TrainPlant | currentState : decelerating > .
 
     rl ieb < O1 : TrainPlant | currentState : accelerating  >  
         =>
@@ -81,7 +81,7 @@ omod TRAINPLANT is
     *** current state.  
     rl cdec  < O1 : TrainPlant | currentState : c >  
         =>
-        < O1 : TrainPlant | currentState : d > .
+        < O1 : TrainPlant | currentState : decelerating > .
 
     rl ccoast  < O1 : TrainPlant | currentState : c >  
         =>
@@ -89,7 +89,7 @@ omod TRAINPLANT is
 
     rl isb < O1 : TrainPlant | currentState : c >  
         =>
-        < O1 : TrainPlant | currentState : d > .
+        < O1 : TrainPlant | currentState : decelerating > .
 
     rl ieb < O1 : TrainPlant | currentState : c >  
         =>
@@ -102,20 +102,20 @@ omod TRAINPLANT is
     *** Effects of commands when decelerating
     *** All messages except cdec and isb 
     *** change the current current state.  
-    crl M < O1 : TrainPlant | currentState : d >  
+    crl M < O1 : TrainPlant | currentState : decelerating >  
         =>
         < O1 : TrainPlant | >
             if M == cdec or M == isb .
 
-    rl ccoast < O1 : TrainPlant | currentState : d >  
+    rl ccoast < O1 : TrainPlant | currentState : decelerating >  
         =>
         < O1 : TrainPlant | currentState : c > .  
 
-    rl ieb < O1 : TrainPlant | currentState : d >  
+    rl ieb < O1 : TrainPlant | currentState : decelerating >  
         =>
         < O1 : TrainPlant | currentState : eb > .
 
-    rl cacc < O1 : TrainPlant | currentState : d >  
+    rl cacc < O1 : TrainPlant | currentState : decelerating >  
         =>
         < O1 : TrainPlant | currentState : accelerating  > . 
 
