@@ -8,7 +8,7 @@ omod ONBOARDUNIT is
     *** TODO: Rename `c` call it timer or something.
     class OnBoardUnit | obuTimer : Time, lastMsg : Msg .
 
-    vars T1 R : Time .
+    vars T1 T2 : Time .
     vars O1 O2 O3 : Oid .
     vars POS VEL D A EOA : NNegRat .
     var REST : Configuration .
@@ -28,8 +28,8 @@ omod ONBOARDUNIT is
         = (predictSpeed(VEL, A) * predictSpeed(VEL, A)) / (2 * D) .
 
     op distanceTraveled : NNegRat NNegRat Time -> NNegRat .
-    eq distanceTraveled(VEL, A, R)
-        = (VEL * R) + (1/2 * A) * (R * R) .
+    eq distanceTraveled(VEL, A, T2)
+        = (VEL * T2) + (1/2 * A) * (T2 * T2) .
 
     *** The `mte` (maximum time elapse) of 
     *** `OnBoardUnit` is the value of its timer.
@@ -37,8 +37,8 @@ omod ONBOARDUNIT is
 
     *** The `delta` of the `OnBoardUnit` class
     *** decrases the timer of `OnBoardUnit`.
-    eq delta(< O1 : OnBoardUnit | obuTimer : T1 >, R)
-        = < O1 : OnBoardUnit | obuTimer : T1 monus R > .
+    eq delta(< O1 : OnBoardUnit | obuTimer : T1 >, T2)
+        = < O1 : OnBoardUnit | obuTimer : T1 monus T2 > .
 
     *** Store 'd-' messages from `driver` in 
     *** lastMsg field as 'c-' messages.
