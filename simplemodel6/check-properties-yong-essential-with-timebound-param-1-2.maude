@@ -15,7 +15,7 @@ omod CHECK-PROPERTIES3 is
 ---  eq timeLimit =  510 .   --- needs 603 to reach exit [monkey], not needed because of timebound
   eq deltaDriver = 70 .
   eq shift = 0 .           ---1/11 .
-  eq deltaTCM = 3 .        --- was 6/10 .
+  eq deltaTC = 3 .        --- was 6/10 .
   eq deltaOBU = 18/10  .   ---  16/10 + shift .  
 
 

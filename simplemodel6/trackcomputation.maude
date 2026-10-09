@@ -14,7 +14,7 @@ omod TRACKCOMPUTATION is
     var POS : NNegRat .
     var REST : Configuration .
 
-    op deltaTCM : -> Time .
+    op deltaTC : -> Time .
 
     *** The `mte` (maximum time elapse) of 
     *** `TrackComputation` is the value of its timer.
@@ -37,7 +37,7 @@ omod TRACKCOMPUTATION is
         < O2 : Train | trainComponents : 
             REST
             < O1 : TrackComputation |
-               timerTC : deltaTCM, oldTrack : track(POS)
+               timerTC : deltaTC, oldTrack : track(POS)
             >
         >
         if TRK =/= track(POS) .
@@ -51,7 +51,7 @@ omod TRACKCOMPUTATION is
         => 
         < O2 : Train | trainComponents : 
             REST
-            < O1 : TrackComputation | timerTC : deltaTCM >
+            < O1 : TrackComputation | timerTC : deltaTC >
         >
         if TRK == track(POS) .
 endom

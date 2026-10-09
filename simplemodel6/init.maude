@@ -26,7 +26,7 @@ omod INITIAL-STATES is
             trainComponents : 
                 < TP1 : TrainPlant | currentState : a >
                 < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
-                < TC1 : TrackComputation | timerTC : deltaTCM, oldTrack : Entry >
+                < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
         < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >
     } .
@@ -38,7 +38,7 @@ omod INITIAL-STATES is
                 < GoodDriver1 : Driver | timer : deltaDriver >
                 < TP1 : TrainPlant | currentState : a >
                 < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
-                < TC1 : TrackComputation | timerTC : deltaTCM, oldTrack : Entry >
+                < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
         < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >
     } .
@@ -48,7 +48,7 @@ omod INITIAL-STATES is
             trainComponents : 
                 < TP1 : TrainPlant | currentState : c > 
                 < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
-                < TC1 : TrackComputation | timerTC : deltaTCM, oldTrack : Entry >
+                < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
         < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry) >
     } .
@@ -60,14 +60,14 @@ omod INITIAL-STATES is
                 < GoodDriver1 : Driver | timer : deltaDriver >
                 < TP1 : TrainPlant | currentState : a > 
                 < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
-                < TC1 : TrackComputation | timerTC : deltaTCM, oldTrack : Entry >  
+                < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >  
         >
         < 2 : Train | position : 0, velocity : 0, eoa : 0, 
             trainComponents : 
                 < GoodDriver2 : Driver | timer : deltaDriver >
                 < TP2 : TrainPlant | currentState : s > 
                 < OBU2 : OnBoardUnit | c : deltaOBU + shift, last : dummy >
-                < TC2 : TrackComputation | timerTC : deltaTCM + shift, oldTrack : Entry >
+                < TC2 : TrackComputation | timerTC : deltaTC + shift, oldTrack : Entry >
         >
         < RBC1 : RBC | occ : (Entry |-> true), pos : (1 |-> Entry, 2 |-> Entry) >
     } . 

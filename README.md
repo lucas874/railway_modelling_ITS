@@ -13,12 +13,13 @@ This repository contains a Maude model of a railway system.
 
 The directory [`simplemodel6`](simplemodel6) contains an updated version of the 
 'original' model found in [`simplemodel5`](simplemodel5); these updates are as follows:
-* Variable renamings:
+* **Variable renamings:**
     * `trackcomputation.maude`: 
         * The `c` field (sort `Time`) in the `TrackComputation` class renamed `timerTC`.
         * The variable X (sort `NNegRat`) renamed `POS`.
-        * variable `T` (sort `Track`) `TRK`.
-        * varialbes `C` and `R` (sort `Time`) `T1` and `T2`, respectively.
+        * The variable `T` (sort `Track`) `TRK`.
+        * The varialbes `C` and `R` (sort `Time`) `T1` and `T2`, respectively.
+        * The field `deltaTCM` (sort `Time`) in the `TrackComputation` class renamed `deltaTC`.
     * `train-param-1-2.maude`:
         * The `x` field (sort `NNegRat`) in the `Train` class renamed `position`.
         * The `v` field (sort `NNegRat`) in the `Train` class renamed `velocity`.
@@ -27,5 +28,5 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
         * The variable `R` (sort `Time`) renamed `T`.
         * The variable `S` (sort `TrainState`) to `TSTATE`.
     * onboardunit.maude:
-        * Variables X and V (both sort `NNegRat`) renamed `POS` and `VEL`, respectively.
+        * Variables `X` and `V` (both sort `NNegRat`) renamed `POS` and `VEL`, respectively.
     * All field name and variable renamings are propagated to other files referencing these fields/variables.

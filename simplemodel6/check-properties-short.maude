@@ -16,7 +16,7 @@ omod CHECK-PROPERTIES3 is
     eq maxTrainID = 1 .    
     eq deltaDriver = 70 .    
     eq shift = 0 .           
-    eq deltaTCM = 3 .        
+    eq deltaTC = 3 .        
     eq deltaOBU = 18/10  . 
 endom
 
