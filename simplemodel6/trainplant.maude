@@ -14,7 +14,8 @@ omod TRAINPLANT is
     *** States representing train being 
     *** stopped, accelerating, decelerating,
     *** coasting, and emergency breaking, respectively.
-    ops stopped accelerating decelerating c eb : -> TrainState [ctor] .
+    ops stopped accelerating decelerating 
+        coasting eb : -> TrainState [ctor] .
 
     *** The train plant.
     class TrainPlant | currentState : TrainState .
@@ -66,7 +67,7 @@ omod TRAINPLANT is
 
     rl ccoast < O1 : TrainPlant | currentState : accelerating  >  
         =>
-        < O1 : TrainPlant | currentState : c > .
+        < O1 : TrainPlant | currentState : coasting > .
 
     rl isb  < O1 : TrainPlant | currentState : accelerating  >  
         =>
@@ -79,23 +80,23 @@ omod TRAINPLANT is
     *** Effects of commands when coasting.
     *** All messages except ccoast changes the 
     *** current state.  
-    rl cdec  < O1 : TrainPlant | currentState : c >  
+    rl cdec  < O1 : TrainPlant | currentState : coasting >  
         =>
         < O1 : TrainPlant | currentState : decelerating > .
 
-    rl ccoast  < O1 : TrainPlant | currentState : c >  
+    rl ccoast  < O1 : TrainPlant | currentState : coasting >  
         =>
         < O1 : TrainPlant | > . 
 
-    rl isb < O1 : TrainPlant | currentState : c >  
+    rl isb < O1 : TrainPlant | currentState : coasting >  
         =>
         < O1 : TrainPlant | currentState : decelerating > .
 
-    rl ieb < O1 : TrainPlant | currentState : c >  
+    rl ieb < O1 : TrainPlant | currentState : coasting >  
         =>
         < O1 : TrainPlant | currentState : eb > .
 
-    rl cacc < O1 : TrainPlant | currentState : c >  
+    rl cacc < O1 : TrainPlant | currentState : coasting >  
         =>
         < O1 : TrainPlant | currentState : accelerating  > .
 
@@ -109,7 +110,7 @@ omod TRAINPLANT is
 
     rl ccoast < O1 : TrainPlant | currentState : decelerating >  
         =>
-        < O1 : TrainPlant | currentState : c > .  
+        < O1 : TrainPlant | currentState : coasting > .  
 
     rl ieb < O1 : TrainPlant | currentState : decelerating >  
         =>

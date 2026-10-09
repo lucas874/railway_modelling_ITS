@@ -44,7 +44,7 @@ omod TRAIN is
     *** when in different states.
     *** Coasting.
     eq delta(< O2 : Train | position : POS, velocity : VEL, 
-        trainComponents : (< O1 : TrainPlant | currentState : c > REST) >, T)
+        trainComponents : (< O1 : TrainPlant | currentState : coasting > REST) >, T)
         = < O2 : Train | position : POS + VEL * T, 
         trainComponents : (< O1 : TrainPlant | > delta(REST, T)) > .
 

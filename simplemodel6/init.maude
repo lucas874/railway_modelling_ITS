@@ -46,7 +46,7 @@ omod INITIAL-STATES is
     eq initWithDriverOptimalConst = {
         < 1 : Train | position : 0, velocity : 70, eoa : 44784,
             trainComponents : 
-                < TP1 : TrainPlant | currentState : c > 
+                < TP1 : TrainPlant | currentState : coasting > 
                 < OBU1 : OnBoardUnit | c : deltaOBU, last : dummy >
                 < TC1 : TrackComputation | timerTC : deltaTC, oldTrack : Entry >
         >
