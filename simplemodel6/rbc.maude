@@ -36,7 +36,8 @@ omod RBC is
 
     *** 0 <= freeTracksAhead <= 5
     op freeTracksAhead : Track MapTrack2Bool -> Nat .
-
+    op maxFreeTracksAhead : -> Nat .
+    eq maxFreeTracksAhead = 5 .
     *** No free tracks ahead if track is exit 
     *** Or if next track is occupied.
     ceq freeTracksAhead(TRK1, OCCMAP)
@@ -46,7 +47,8 @@ omod RBC is
     *** Recursively compute free tracks ahead
     *** -- maximum 5 though.
     ceq freeTracksAhead(TRK1, OCCMAP)
-        = min(5, (1 + freeTracksAhead(next(TRK1), OCCMAP)))
+        = min(maxFreeTracksAhead, 
+              (1 + freeTracksAhead(next(TRK1), OCCMAP)))
             if TRK1 =/= Exit .
 
     *** Determines how many tracks ahead a 

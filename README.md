@@ -44,14 +44,19 @@ The directory [`simplemodel6`](simplemodel6) contains an updated version of the
     * [`rbc.maude`](simplemodel6/rbc.maude):
         * The fields `occ` (map from `Track` to `Bool`) and `pos` (map from `Oid` to `Track`)
         in the class `RBC` renamed to `occupiedTracks` and `trainPositions`, respectively.
+        * Variables `T1` and `T2` (both of sort `Track`) renamed to `TRK1` and `TRK2`, respectively.
         * The variable `R` (sort `Time`) has been renamed `T`.
     * The attribute `[ctor]` has been added to constructor operators.
     * Labels added:
         * lala
-    * Merged rewrite rules:
+    * **Merged rewrite rules:**
         * [`train-param-1-2.maude`](simplemodel6/train-param-1-2.maude): 
             * Rule stopping transitioning to `TrainState` `stopped`
             when velocity is 0 and `currentState` is `decelerating`
             or `emergencyBraking`. Used to be two rules. 
-    * All field name and variable renamings are propagated to other files referencing these fields/variables.
-    * Unused variables and outcommented code have largely been removed.
+    * **Other:**
+        * All field name and variable renamings are propagated to other files referencing these fields/variables.
+        * Unused variables and outcommented code have largely been removed.
+        * `rbc.maude`:
+            * The operation `maxFreeTracksAhead` has been added -- is equal to 5 and is used
+            in operation freeTracksAhead.
