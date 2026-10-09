@@ -14,7 +14,7 @@ omod RBC is
 
     class RBC | occupiedTracks : MapTrack2Bool, trainPositions : MapTrain2Track .
 
-    vars T1, T2 : Track .
+    vars TRK1, T2 : Track .
     *** If a train is occupying track `TRK` then 
     *** `OCCMAP[TRK] = true`, otherwise `OCCMAP[TRK] = false`.  
     var OCCMAP : MapTrack2Bool .
@@ -39,15 +39,15 @@ omod RBC is
 
     *** No free tracks ahead if track is exit 
     *** Or if next track is occupied.
-    ceq freeTracksAhead(T1, OCCMAP)
+    ceq freeTracksAhead(TRK1, OCCMAP)
         = 0 
-            if ((T1 == Exit) or OCCMAP[next(T1)] == true) .
+            if ((TRK1 == Exit) or OCCMAP[next(TRK1)] == true) .
 
     *** Recursively compute free tracks ahead
     *** -- maximum 5 though.
-    ceq freeTracksAhead(T1, OCCMAP)
-        = min(5, (1 + freeTracksAhead(next(T1), OCCMAP)))
-            if T1 =/= Exit .
+    ceq freeTracksAhead(TRK1, OCCMAP)
+        = min(5, (1 + freeTracksAhead(next(TRK1), OCCMAP)))
+            if TRK1 =/= Exit .
 
     *** Determines how many tracks ahead a 
     *** train can move from a given track.
@@ -55,9 +55,9 @@ omod RBC is
     *** track that is N tracks ahead.
     op computeMA : Track Oid -> Nat .
 
-    eq computeMA(T1, 0) = end(T1) .
-    eq computeMA(T1, 1) = end(next(T1)) .
-    ceq computeMA(T1, N) = computeMA(next(T1), N - 1) if N > 1 .
+    eq computeMA(TRK1, 0) = end(TRK1) .
+    eq computeMA(TRK1, 1) = end(next(TRK1)) .
+    ceq computeMA(TRK1, N) = computeMA(next(TRK1), N - 1) if N > 1 .
 
     *** Passage of time does not affect `RBC`.
     eq mte(< O1 : RBC | >) = INF .
